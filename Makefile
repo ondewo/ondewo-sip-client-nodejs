@@ -107,6 +107,7 @@ release: ## Create Github and NPM Release
 	git add package.json
 	git add package-lock.json
 	git add ${ONDEWO_PROTO_COMPILER_DIR}
+	git add ${SIP_APIS_DIR}
 	git status
 	git commit -m "Preparing for Release ${ONDEWO_SIP_VERSION}"
 	git push
