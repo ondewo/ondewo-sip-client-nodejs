@@ -58,6 +58,10 @@ export class RegisterAccountRequest extends jspb.Message {
 	setAccountName(value: string): RegisterAccountRequest;
 	getPassword(): string;
 	setPassword(value: string): RegisterAccountRequest;
+	getAuthUsername(): string;
+	setAuthUsername(value: string): RegisterAccountRequest;
+	getOutboundProxy(): string;
+	setOutboundProxy(value: string): RegisterAccountRequest;
 
 	serializeBinary(): Uint8Array;
 	toObject(includeInstance?: boolean): RegisterAccountRequest.AsObject;
@@ -76,6 +80,8 @@ export namespace RegisterAccountRequest {
 	export type AsObject = {
 		accountName: string;
 		password: string;
+		authUsername: string;
+		outboundProxy: string;
 	};
 }
 
@@ -144,6 +150,12 @@ export class SipStatus extends jspb.Message {
 
 	getHeadersMap(): jspb.Map<string, string>;
 	clearHeadersMap(): void;
+	getDescription(): string;
+	setDescription(value: string): SipStatus;
+	getExceptionName(): string;
+	setExceptionName(value: string): SipStatus;
+	getExceptionTraceback(): string;
+	setExceptionTraceback(value: string): SipStatus;
 
 	serializeBinary(): Uint8Array;
 	toObject(includeInstance?: boolean): SipStatus.AsObject;
@@ -164,6 +176,9 @@ export namespace SipStatus {
 		transferCallId: string;
 
 		headersMap: Array<[string, string]>;
+		description: string;
+		exceptionName: string;
+		exceptionTraceback: string;
 	};
 
 	export enum StatusType {
@@ -180,7 +195,15 @@ export namespace SipStatus {
 		INCOMING_CALL_FAILED = 10,
 		OUTGOING_CALL_FAILED = 11,
 		INCOMING_CALL_FINISHED = 12,
-		OUTGOING_CALL_FINISHED = 13
+		OUTGOING_CALL_FINISHED = 13,
+		SESSION_REGISTRATION_FAILED = 14,
+		SESSION_STARTED = 15,
+		SESSION_ENDED = 16,
+		TRANSFER_CALL_FAILED = 17,
+		MICROPHONE_MUTED = 18,
+		MICROPHONE_UNMUTED = 19,
+		MICROPHONE_WAV_FILES_PLAYED = 20,
+		NO_ONGOING_CALL = 21
 	}
 }
 

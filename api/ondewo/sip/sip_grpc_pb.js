@@ -120,73 +120,82 @@ function deserialize_ondewo_sip_TransferCallRequest(buffer_arg) {
 	return ondewo_sip_sip_pb.TransferCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+// ONDEWO-SIP API available at <a href="https://github.com/ondewo/ondewo-sip-api>">GitHub</a>
 var SipService = (exports.SipService = {
+	// Starts a new SIP session for an account registered at a SIP server. <code>RegisterAccount</code> need to be called before.
 	startSession: {
 		path: '/ondewo.sip.Sip/StartSession',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.StartSessionRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_StartSessionRequest,
 		requestDeserialize: deserialize_ondewo_sip_StartSessionRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Ends a SIP session for an account registered at a SIP server
 	endSession: {
 		path: '/ondewo.sip.Sip/EndSession',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_google_protobuf_Empty,
 		requestDeserialize: deserialize_google_protobuf_Empty,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Starts a call in an active SIP session for an account registered at a SIP server
 	startCall: {
 		path: '/ondewo.sip.Sip/StartCall',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.StartCallRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_StartCallRequest,
 		requestDeserialize: deserialize_ondewo_sip_StartCallRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Ends a call in an active SIP session for an account registered at a SIP server
 	endCall: {
 		path: '/ondewo.sip.Sip/EndCall',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.EndCallRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_EndCallRequest,
 		requestDeserialize: deserialize_ondewo_sip_EndCallRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Transfers a call in an active SIP session for an account registered at a SIP server to
+	// another SIP account or phone number specified by <code>transfer_id</code>
 	transferCall: {
 		path: '/ondewo.sip.Sip/TransferCall',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.TransferCallRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_TransferCallRequest,
 		requestDeserialize: deserialize_ondewo_sip_TransferCallRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Registers s SIP account at a SIP server
 	registerAccount: {
 		path: '/ondewo.sip.Sip/RegisterAccount',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.RegisterAccountRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_RegisterAccountRequest,
 		requestDeserialize: deserialize_ondewo_sip_RegisterAccountRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Gets the current SIP status
 	getSipStatus: {
 		path: '/ondewo.sip.Sip/GetSipStatus',
 		requestStream: false,
@@ -198,6 +207,7 @@ var SipService = (exports.SipService = {
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Gets the history of SIP status
 	getSipStatusHistory: {
 		path: '/ondewo.sip.Sip/GetSipStatusHistory',
 		requestStream: false,
@@ -209,39 +219,43 @@ var SipService = (exports.SipService = {
 		responseSerialize: serialize_ondewo_sip_SipStatusHistoryResponse,
 		responseDeserialize: deserialize_ondewo_sip_SipStatusHistoryResponse
 	},
+	// Plays wav files during an ongoing call of an active SIP session
 	playWavFiles: {
 		path: '/ondewo.sip.Sip/PlayWavFiles',
 		requestStream: false,
 		responseStream: false,
 		requestType: ondewo_sip_sip_pb.PlayWavFilesRequest,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_ondewo_sip_PlayWavFilesRequest,
 		requestDeserialize: deserialize_ondewo_sip_PlayWavFilesRequest,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Mutes the microphone in an ongoing call of an active SIP session
 	mute: {
 		path: '/ondewo.sip.Sip/Mute',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_google_protobuf_Empty,
 		requestDeserialize: deserialize_google_protobuf_Empty,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
+	// Unmutes the microphone in an ongoing call of an active SIP session
 	unMute: {
 		path: '/ondewo.sip.Sip/UnMute',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
-		responseType: google_protobuf_empty_pb.Empty,
+		responseType: ondewo_sip_sip_pb.SipStatus,
 		requestSerialize: serialize_google_protobuf_Empty,
 		requestDeserialize: deserialize_google_protobuf_Empty,
-		responseSerialize: serialize_google_protobuf_Empty,
-		responseDeserialize: deserialize_google_protobuf_Empty
+		responseSerialize: serialize_ondewo_sip_SipStatus,
+		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	}
 });
 
 exports.SipClient = grpc.makeGenericClientConstructor(SipService);
+// SIP LifeCycle is explained at <a href="https://thanhloi2603.wordpress.com/2017/06/10/sip-lifecycle-overview/">here</a>

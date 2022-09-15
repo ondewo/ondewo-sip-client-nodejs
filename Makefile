@@ -15,9 +15,9 @@ export
 # 		Variables
 ########################################################
 
-ONDEWO_SIP_VERSION = 3.1.0
+ONDEWO_SIP_VERSION = 4.0.0
 
-SIP_API_GIT_BRANCH=tags/3.1.0
+SIP_API_GIT_BRANCH=tags/4.0.0
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/4.1.1
 ONDEWO_PROTO_COMPILER_DIR=ondewo-proto-compiler
 SIP_APIS_DIR=src/ondewo-sip-api

@@ -499,7 +499,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
 		var f,
 			obj = {
 				accountName: jspb.Message.getFieldWithDefault(msg, 1, ''),
-				password: jspb.Message.getFieldWithDefault(msg, 2, '')
+				password: jspb.Message.getFieldWithDefault(msg, 2, ''),
+				authUsername: jspb.Message.getFieldWithDefault(msg, 3, ''),
+				outboundProxy: jspb.Message.getFieldWithDefault(msg, 4, '')
 			};
 
 		if (includeInstance) {
@@ -542,6 +544,14 @@ proto.ondewo.sip.RegisterAccountRequest.deserializeBinaryFromReader = function (
 				var value = /** @type {string} */ (reader.readString());
 				msg.setPassword(value);
 				break;
+			case 3:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setAuthUsername(value);
+				break;
+			case 4:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setOutboundProxy(value);
+				break;
 			default:
 				reader.skipField();
 				break;
@@ -577,6 +587,14 @@ proto.ondewo.sip.RegisterAccountRequest.serializeBinaryToWriter = function (mess
 	if (f.length > 0) {
 		writer.writeString(2, f);
 	}
+	f = message.getAuthUsername();
+	if (f.length > 0) {
+		writer.writeString(3, f);
+	}
+	f = message.getOutboundProxy();
+	if (f.length > 0) {
+		writer.writeString(4, f);
+	}
 };
 
 /**
@@ -609,6 +627,38 @@ proto.ondewo.sip.RegisterAccountRequest.prototype.getPassword = function () {
  */
 proto.ondewo.sip.RegisterAccountRequest.prototype.setPassword = function (value) {
 	return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+/**
+ * optional string auth_username = 3;
+ * @return {string}
+ */
+proto.ondewo.sip.RegisterAccountRequest.prototype.getAuthUsername = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.RegisterAccountRequest} returns this
+ */
+proto.ondewo.sip.RegisterAccountRequest.prototype.setAuthUsername = function (value) {
+	return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+/**
+ * optional string outbound_proxy = 4;
+ * @return {string}
+ */
+proto.ondewo.sip.RegisterAccountRequest.prototype.getOutboundProxy = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.RegisterAccountRequest} returns this
+ */
+proto.ondewo.sip.RegisterAccountRequest.prototype.setOutboundProxy = function (value) {
+	return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -942,7 +992,10 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
 				statusType: jspb.Message.getFieldWithDefault(msg, 3, 0),
 				calleeId: jspb.Message.getFieldWithDefault(msg, 4, ''),
 				transferCallId: jspb.Message.getFieldWithDefault(msg, 5, ''),
-				headersMap: (f = msg.getHeadersMap()) ? f.toObject(includeInstance, undefined) : []
+				headersMap: (f = msg.getHeadersMap()) ? f.toObject(includeInstance, undefined) : [],
+				description: jspb.Message.getFieldWithDefault(msg, 7, ''),
+				exceptionName: jspb.Message.getFieldWithDefault(msg, 8, ''),
+				exceptionTraceback: jspb.Message.getFieldWithDefault(msg, 9, '')
 			};
 
 		if (includeInstance) {
@@ -1012,6 +1065,18 @@ proto.ondewo.sip.SipStatus.deserializeBinaryFromReader = function (msg, reader) 
 					);
 				});
 				break;
+			case 7:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setDescription(value);
+				break;
+			case 8:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setExceptionName(value);
+				break;
+			case 9:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setExceptionTraceback(value);
+				break;
 			default:
 				reader.skipField();
 				break;
@@ -1063,6 +1128,18 @@ proto.ondewo.sip.SipStatus.serializeBinaryToWriter = function (message, writer) 
 	if (f && f.getLength() > 0) {
 		f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeString);
 	}
+	f = message.getDescription();
+	if (f.length > 0) {
+		writer.writeString(7, f);
+	}
+	f = message.getExceptionName();
+	if (f.length > 0) {
+		writer.writeString(8, f);
+	}
+	f = message.getExceptionTraceback();
+	if (f.length > 0) {
+		writer.writeString(9, f);
+	}
 };
 
 /**
@@ -1082,7 +1159,15 @@ proto.ondewo.sip.SipStatus.StatusType = {
 	INCOMING_CALL_FAILED: 10,
 	OUTGOING_CALL_FAILED: 11,
 	INCOMING_CALL_FINISHED: 12,
-	OUTGOING_CALL_FINISHED: 13
+	OUTGOING_CALL_FINISHED: 13,
+	SESSION_REGISTRATION_FAILED: 14,
+	SESSION_STARTED: 15,
+	SESSION_ENDED: 16,
+	TRANSFER_CALL_FAILED: 17,
+	MICROPHONE_MUTED: 18,
+	MICROPHONE_UNMUTED: 19,
+	MICROPHONE_WAV_FILES_PLAYED: 20,
+	NO_ONGOING_CALL: 21
 };
 
 /**
@@ -1200,6 +1285,54 @@ proto.ondewo.sip.SipStatus.prototype.getHeadersMap = function (opt_noLazyCreate)
 proto.ondewo.sip.SipStatus.prototype.clearHeadersMap = function () {
 	this.getHeadersMap().clear();
 	return this;
+};
+
+/**
+ * optional string description = 7;
+ * @return {string}
+ */
+proto.ondewo.sip.SipStatus.prototype.getDescription = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.SipStatus} returns this
+ */
+proto.ondewo.sip.SipStatus.prototype.setDescription = function (value) {
+	return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+/**
+ * optional string exception_name = 8;
+ * @return {string}
+ */
+proto.ondewo.sip.SipStatus.prototype.getExceptionName = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.SipStatus} returns this
+ */
+proto.ondewo.sip.SipStatus.prototype.setExceptionName = function (value) {
+	return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+/**
+ * optional string exception_traceback = 9;
+ * @return {string}
+ */
+proto.ondewo.sip.SipStatus.prototype.getExceptionTraceback = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.SipStatus} returns this
+ */
+proto.ondewo.sip.SipStatus.prototype.setExceptionTraceback = function (value) {
+	return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 /**
