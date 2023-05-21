@@ -32,37 +32,59 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
 	return google_protobuf_empty_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_ondewo_sip_EndCallRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.EndCallRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.EndCallRequest');
+function serialize_ondewo_sip_SipEndCallRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipEndCallRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipEndCallRequest');
 	}
 	return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_ondewo_sip_EndCallRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.EndCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ondewo_sip_SipEndCallRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipEndCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_ondewo_sip_PlayWavFilesRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.PlayWavFilesRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.PlayWavFilesRequest');
+function serialize_ondewo_sip_SipPlayWavFilesRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipPlayWavFilesRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipPlayWavFilesRequest');
 	}
 	return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_ondewo_sip_PlayWavFilesRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.PlayWavFilesRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ondewo_sip_SipPlayWavFilesRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipPlayWavFilesRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_ondewo_sip_RegisterAccountRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.RegisterAccountRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.RegisterAccountRequest');
+function serialize_ondewo_sip_SipRegisterAccountRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipRegisterAccountRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipRegisterAccountRequest');
 	}
 	return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_ondewo_sip_RegisterAccountRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.RegisterAccountRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ondewo_sip_SipRegisterAccountRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipRegisterAccountRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_ondewo_sip_SipStartCallRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipStartCallRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipStartCallRequest');
+	}
+	return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ondewo_sip_SipStartCallRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipStartCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_ondewo_sip_SipStartSessionRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipStartSessionRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipStartSessionRequest');
+	}
+	return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ondewo_sip_SipStartSessionRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipStartSessionRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_ondewo_sip_SipStatus(arg) {
@@ -87,56 +109,34 @@ function deserialize_ondewo_sip_SipStatusHistoryResponse(buffer_arg) {
 	return ondewo_sip_sip_pb.SipStatusHistoryResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_ondewo_sip_StartCallRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.StartCallRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.StartCallRequest');
+function serialize_ondewo_sip_SipTransferCallRequest(arg) {
+	if (!(arg instanceof ondewo_sip_sip_pb.SipTransferCallRequest)) {
+		throw new Error('Expected argument of type ondewo.sip.SipTransferCallRequest');
 	}
 	return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_ondewo_sip_StartCallRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.StartCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_ondewo_sip_StartSessionRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.StartSessionRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.StartSessionRequest');
-	}
-	return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_ondewo_sip_StartSessionRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.StartSessionRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_ondewo_sip_TransferCallRequest(arg) {
-	if (!(arg instanceof ondewo_sip_sip_pb.TransferCallRequest)) {
-		throw new Error('Expected argument of type ondewo.sip.TransferCallRequest');
-	}
-	return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_ondewo_sip_TransferCallRequest(buffer_arg) {
-	return ondewo_sip_sip_pb.TransferCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ondewo_sip_SipTransferCallRequest(buffer_arg) {
+	return ondewo_sip_sip_pb.SipTransferCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 // ONDEWO-SIP API available at <a href="https://github.com/ondewo/ondewo-sip-api>">GitHub</a>
 var SipService = (exports.SipService = {
 	// Starts a new SIP session for an account registered at a SIP server. <code>RegisterAccount</code> need to be called before.
-	startSession: {
-		path: '/ondewo.sip.Sip/StartSession',
+	sipStartSession: {
+		path: '/ondewo.sip.Sip/SipStartSession',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.StartSessionRequest,
+		requestType: ondewo_sip_sip_pb.SipStartSessionRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_StartSessionRequest,
-		requestDeserialize: deserialize_ondewo_sip_StartSessionRequest,
+		requestSerialize: serialize_ondewo_sip_SipStartSessionRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipStartSessionRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Ends a SIP session for an account registered at a SIP server
-	endSession: {
-		path: '/ondewo.sip.Sip/EndSession',
+	sipEndSession: {
+		path: '/ondewo.sip.Sip/SipEndSession',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
@@ -147,57 +147,57 @@ var SipService = (exports.SipService = {
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Starts a call in an active SIP session for an account registered at a SIP server
-	startCall: {
-		path: '/ondewo.sip.Sip/StartCall',
+	sipStartCall: {
+		path: '/ondewo.sip.Sip/SipStartCall',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.StartCallRequest,
+		requestType: ondewo_sip_sip_pb.SipStartCallRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_StartCallRequest,
-		requestDeserialize: deserialize_ondewo_sip_StartCallRequest,
+		requestSerialize: serialize_ondewo_sip_SipStartCallRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipStartCallRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Ends a call in an active SIP session for an account registered at a SIP server
-	endCall: {
-		path: '/ondewo.sip.Sip/EndCall',
+	sipEndCall: {
+		path: '/ondewo.sip.Sip/SipEndCall',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.EndCallRequest,
+		requestType: ondewo_sip_sip_pb.SipEndCallRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_EndCallRequest,
-		requestDeserialize: deserialize_ondewo_sip_EndCallRequest,
+		requestSerialize: serialize_ondewo_sip_SipEndCallRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipEndCallRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Transfers a call in an active SIP session for an account registered at a SIP server to
 	// another SIP account or phone number specified by <code>transfer_id</code>
-	transferCall: {
-		path: '/ondewo.sip.Sip/TransferCall',
+	sipTransferCall: {
+		path: '/ondewo.sip.Sip/SipTransferCall',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.TransferCallRequest,
+		requestType: ondewo_sip_sip_pb.SipTransferCallRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_TransferCallRequest,
-		requestDeserialize: deserialize_ondewo_sip_TransferCallRequest,
+		requestSerialize: serialize_ondewo_sip_SipTransferCallRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipTransferCallRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Registers s SIP account at a SIP server
-	registerAccount: {
-		path: '/ondewo.sip.Sip/RegisterAccount',
+	sipRegisterAccount: {
+		path: '/ondewo.sip.Sip/SipRegisterAccount',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.RegisterAccountRequest,
+		requestType: ondewo_sip_sip_pb.SipRegisterAccountRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_RegisterAccountRequest,
-		requestDeserialize: deserialize_ondewo_sip_RegisterAccountRequest,
+		requestSerialize: serialize_ondewo_sip_SipRegisterAccountRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipRegisterAccountRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Gets the current SIP status
-	getSipStatus: {
-		path: '/ondewo.sip.Sip/GetSipStatus',
+	sipGetSipStatus: {
+		path: '/ondewo.sip.Sip/SipGetSipStatus',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
@@ -208,8 +208,8 @@ var SipService = (exports.SipService = {
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Gets the history of SIP status
-	getSipStatusHistory: {
-		path: '/ondewo.sip.Sip/GetSipStatusHistory',
+	sipGetSipStatusHistory: {
+		path: '/ondewo.sip.Sip/SipGetSipStatusHistory',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
@@ -220,20 +220,20 @@ var SipService = (exports.SipService = {
 		responseDeserialize: deserialize_ondewo_sip_SipStatusHistoryResponse
 	},
 	// Plays wav files during an ongoing call of an active SIP session
-	playWavFiles: {
-		path: '/ondewo.sip.Sip/PlayWavFiles',
+	sipPlayWavFiles: {
+		path: '/ondewo.sip.Sip/SipPlayWavFiles',
 		requestStream: false,
 		responseStream: false,
-		requestType: ondewo_sip_sip_pb.PlayWavFilesRequest,
+		requestType: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		responseType: ondewo_sip_sip_pb.SipStatus,
-		requestSerialize: serialize_ondewo_sip_PlayWavFilesRequest,
-		requestDeserialize: deserialize_ondewo_sip_PlayWavFilesRequest,
+		requestSerialize: serialize_ondewo_sip_SipPlayWavFilesRequest,
+		requestDeserialize: deserialize_ondewo_sip_SipPlayWavFilesRequest,
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
 	// Mutes the microphone in an ongoing call of an active SIP session
-	mute: {
-		path: '/ondewo.sip.Sip/Mute',
+	sipMute: {
+		path: '/ondewo.sip.Sip/SipMute',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,
@@ -243,9 +243,9 @@ var SipService = (exports.SipService = {
 		responseSerialize: serialize_ondewo_sip_SipStatus,
 		responseDeserialize: deserialize_ondewo_sip_SipStatus
 	},
-	// Unmutes the microphone in an ongoing call of an active SIP session
-	unMute: {
-		path: '/ondewo.sip.Sip/UnMute',
+	// Un-mutes the microphone in an ongoing call of an active SIP session
+	sipUnMute: {
+		path: '/ondewo.sip.Sip/SipUnMute',
 		requestStream: false,
 		responseStream: false,
 		requestType: google_protobuf_empty_pb.Empty,

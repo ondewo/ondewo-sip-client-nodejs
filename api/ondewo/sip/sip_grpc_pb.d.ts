@@ -10,32 +10,32 @@ import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 interface ISipService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
-	startSession: ISipService_IStartSession;
-	endSession: ISipService_IEndSession;
-	startCall: ISipService_IStartCall;
-	endCall: ISipService_IEndCall;
-	transferCall: ISipService_ITransferCall;
-	registerAccount: ISipService_IRegisterAccount;
-	getSipStatus: ISipService_IGetSipStatus;
-	getSipStatusHistory: ISipService_IGetSipStatusHistory;
-	playWavFiles: ISipService_IPlayWavFiles;
-	mute: ISipService_IMute;
-	unMute: ISipService_IUnMute;
+	sipStartSession: ISipService_ISipStartSession;
+	sipEndSession: ISipService_ISipEndSession;
+	sipStartCall: ISipService_ISipStartCall;
+	sipEndCall: ISipService_ISipEndCall;
+	sipTransferCall: ISipService_ISipTransferCall;
+	sipRegisterAccount: ISipService_ISipRegisterAccount;
+	sipGetSipStatus: ISipService_ISipGetSipStatus;
+	sipGetSipStatusHistory: ISipService_ISipGetSipStatusHistory;
+	sipPlayWavFiles: ISipService_ISipPlayWavFiles;
+	sipMute: ISipService_ISipMute;
+	sipUnMute: ISipService_ISipUnMute;
 }
 
-interface ISipService_IStartSession
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.StartSessionRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/StartSession';
+interface ISipService_ISipStartSession
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipStartSessionRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipStartSession';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.StartSessionRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.StartSessionRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStartSessionRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStartSessionRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IEndSession
+interface ISipService_ISipEndSession
 	extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/EndSession';
+	path: '/ondewo.sip.Sip/SipEndSession';
 	requestStream: false;
 	responseStream: false;
 	requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
@@ -43,49 +43,49 @@ interface ISipService_IEndSession
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IStartCall
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.StartCallRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/StartCall';
+interface ISipService_ISipStartCall
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipStartCallRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipStartCall';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.StartCallRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.StartCallRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStartCallRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStartCallRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IEndCall
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.EndCallRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/EndCall';
+interface ISipService_ISipEndCall
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipEndCallRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipEndCall';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.EndCallRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.EndCallRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipEndCallRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipEndCallRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_ITransferCall
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.TransferCallRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/TransferCall';
+interface ISipService_ISipTransferCall
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipTransferCallRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipTransferCall';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.TransferCallRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.TransferCallRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipTransferCallRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipTransferCallRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IRegisterAccount
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.RegisterAccountRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/RegisterAccount';
+interface ISipService_ISipRegisterAccount
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipRegisterAccountRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipRegisterAccount';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.RegisterAccountRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.RegisterAccountRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipRegisterAccountRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipRegisterAccountRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IGetSipStatus
+interface ISipService_ISipGetSipStatus
 	extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/GetSipStatus';
+	path: '/ondewo.sip.Sip/SipGetSipStatus';
 	requestStream: false;
 	responseStream: false;
 	requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
@@ -93,9 +93,9 @@ interface ISipService_IGetSipStatus
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IGetSipStatusHistory
+interface ISipService_ISipGetSipStatusHistory
 	extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatusHistoryResponse> {
-	path: '/ondewo.sip.Sip/GetSipStatusHistory';
+	path: '/ondewo.sip.Sip/SipGetSipStatusHistory';
 	requestStream: false;
 	responseStream: false;
 	requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
@@ -103,18 +103,19 @@ interface ISipService_IGetSipStatusHistory
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatusHistoryResponse>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatusHistoryResponse>;
 }
-interface ISipService_IPlayWavFiles
-	extends grpc.MethodDefinition<ondewo_sip_sip_pb.PlayWavFilesRequest, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/PlayWavFiles';
+interface ISipService_ISipPlayWavFiles
+	extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipPlayWavFilesRequest, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipPlayWavFiles';
 	requestStream: false;
 	responseStream: false;
-	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.PlayWavFilesRequest>;
-	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.PlayWavFilesRequest>;
+	requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipPlayWavFilesRequest>;
+	requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipPlayWavFilesRequest>;
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IMute extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/Mute';
+interface ISipService_ISipMute
+	extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus> {
+	path: '/ondewo.sip.Sip/SipMute';
 	requestStream: false;
 	responseStream: false;
 	requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
@@ -122,9 +123,9 @@ interface ISipService_IMute extends grpc.MethodDefinition<google_protobuf_empty_
 	responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
 	responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
-interface ISipService_IUnMute
+interface ISipService_ISipUnMute
 	extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus> {
-	path: '/ondewo.sip.Sip/UnMute';
+	path: '/ondewo.sip.Sip/SipUnMute';
 	requestStream: false;
 	responseStream: false;
 	requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
@@ -136,180 +137,183 @@ interface ISipService_IUnMute
 export const SipService: ISipService;
 
 export interface ISipServer {
-	startSession: grpc.handleUnaryCall<ondewo_sip_sip_pb.StartSessionRequest, ondewo_sip_sip_pb.SipStatus>;
-	endSession: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
-	startCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.StartCallRequest, ondewo_sip_sip_pb.SipStatus>;
-	endCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.EndCallRequest, ondewo_sip_sip_pb.SipStatus>;
-	transferCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.TransferCallRequest, ondewo_sip_sip_pb.SipStatus>;
-	registerAccount: grpc.handleUnaryCall<ondewo_sip_sip_pb.RegisterAccountRequest, ondewo_sip_sip_pb.SipStatus>;
-	getSipStatus: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
-	getSipStatusHistory: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatusHistoryResponse>;
-	playWavFiles: grpc.handleUnaryCall<ondewo_sip_sip_pb.PlayWavFilesRequest, ondewo_sip_sip_pb.SipStatus>;
-	mute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
-	unMute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
+	sipStartSession: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipStartSessionRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipEndSession: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
+	sipStartCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipStartCallRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipEndCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipEndCallRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipTransferCall: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipTransferCallRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipRegisterAccount: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipRegisterAccountRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipGetSipStatus: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
+	sipGetSipStatusHistory: grpc.handleUnaryCall<
+		google_protobuf_empty_pb.Empty,
+		ondewo_sip_sip_pb.SipStatusHistoryResponse
+	>;
+	sipPlayWavFiles: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipPlayWavFilesRequest, ondewo_sip_sip_pb.SipStatus>;
+	sipMute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
+	sipUnMute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
 }
 
 export interface ISipClient {
-	startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	endSession(
+	sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	endSession(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	endSession(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	getSipStatus(
-		request: google_protobuf_empty_pb.Empty,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	getSipStatus(
+	sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	getSipStatus(
+	sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	getSipStatusHistory(
+	sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	getSipStatusHistory(
+	sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	getSipStatusHistory(
+	sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
+	sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
+	sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	mute(
-		request: google_protobuf_empty_pb.Empty,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	mute(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	mute(
-		request: google_protobuf_empty_pb.Empty,
+	sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	unMute(
+	sipMute(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	unMute(
+	sipMute(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	unMute(
+	sipMute(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipUnMute(
+		request: google_protobuf_empty_pb.Empty,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipUnMute(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	sipUnMute(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
@@ -319,166 +323,166 @@ export interface ISipClient {
 
 export class SipClient extends grpc.Client implements ISipClient {
 	constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
-	public startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	public sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	public sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public startSession(
-		request: ondewo_sip_sip_pb.StartSessionRequest,
+	public sipStartSession(
+		request: ondewo_sip_sip_pb.SipStartSessionRequest,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public endSession(
+	public sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public endSession(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public endSession(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public startCall(
-		request: ondewo_sip_sip_pb.StartCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public endCall(
-		request: ondewo_sip_sip_pb.EndCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public transferCall(
-		request: ondewo_sip_sip_pb.TransferCallRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public registerAccount(
-		request: ondewo_sip_sip_pb.RegisterAccountRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public getSipStatus(
-		request: google_protobuf_empty_pb.Empty,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public getSipStatus(
+	public sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public getSipStatus(
+	public sipEndSession(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public getSipStatusHistory(
+	public sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipStartCall(
+		request: ondewo_sip_sip_pb.SipStartCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipEndCall(
+		request: ondewo_sip_sip_pb.SipEndCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipTransferCall(
+		request: ondewo_sip_sip_pb.SipTransferCallRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipRegisterAccount(
+		request: ondewo_sip_sip_pb.SipRegisterAccountRequest,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipGetSipStatus(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	public getSipStatusHistory(
+	public sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	public getSipStatusHistory(
+	public sipGetSipStatusHistory(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatusHistoryResponse) => void
 	): grpc.ClientUnaryCall;
-	public playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
+	public sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
+	public sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public playWavFiles(
-		request: ondewo_sip_sip_pb.PlayWavFilesRequest,
-		metadata: grpc.Metadata,
-		options: Partial<grpc.CallOptions>,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public mute(
-		request: google_protobuf_empty_pb.Empty,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public mute(
-		request: google_protobuf_empty_pb.Empty,
-		metadata: grpc.Metadata,
-		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
-	): grpc.ClientUnaryCall;
-	public mute(
-		request: google_protobuf_empty_pb.Empty,
+	public sipPlayWavFiles(
+		request: ondewo_sip_sip_pb.SipPlayWavFilesRequest,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public unMute(
+	public sipMute(
 		request: google_protobuf_empty_pb.Empty,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public unMute(
+	public sipMute(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
 	): grpc.ClientUnaryCall;
-	public unMute(
+	public sipMute(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		options: Partial<grpc.CallOptions>,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipUnMute(
+		request: google_protobuf_empty_pb.Empty,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipUnMute(
+		request: google_protobuf_empty_pb.Empty,
+		metadata: grpc.Metadata,
+		callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void
+	): grpc.ClientUnaryCall;
+	public sipUnMute(
 		request: google_protobuf_empty_pb.Empty,
 		metadata: grpc.Metadata,
 		options: Partial<grpc.CallOptions>,
