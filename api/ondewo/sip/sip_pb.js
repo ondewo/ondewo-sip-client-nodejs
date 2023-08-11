@@ -1009,7 +1009,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
 				headersMap: (f = msg.getHeadersMap()) ? f.toObject(includeInstance, undefined) : [],
 				description: jspb.Message.getFieldWithDefault(msg, 7, ''),
 				exceptionName: jspb.Message.getFieldWithDefault(msg, 8, ''),
-				exceptionTraceback: jspb.Message.getFieldWithDefault(msg, 9, '')
+				exceptionTraceback: jspb.Message.getFieldWithDefault(msg, 9, ''),
+				nluSessionName: jspb.Message.getFieldWithDefault(msg, 10, '')
 			};
 
 		if (includeInstance) {
@@ -1091,6 +1092,10 @@ proto.ondewo.sip.SipStatus.deserializeBinaryFromReader = function (msg, reader) 
 				var value = /** @type {string} */ (reader.readString());
 				msg.setExceptionTraceback(value);
 				break;
+			case 10:
+				var value = /** @type {string} */ (reader.readString());
+				msg.setNluSessionName(value);
+				break;
 			default:
 				reader.skipField();
 				break;
@@ -1153,6 +1158,10 @@ proto.ondewo.sip.SipStatus.serializeBinaryToWriter = function (message, writer) 
 	f = message.getExceptionTraceback();
 	if (f.length > 0) {
 		writer.writeString(9, f);
+	}
+	f = message.getNluSessionName();
+	if (f.length > 0) {
+		writer.writeString(10, f);
 	}
 };
 
@@ -1347,6 +1356,22 @@ proto.ondewo.sip.SipStatus.prototype.getExceptionTraceback = function () {
  */
 proto.ondewo.sip.SipStatus.prototype.setExceptionTraceback = function (value) {
 	return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+/**
+ * optional string nlu_session_name = 10;
+ * @return {string}
+ */
+proto.ondewo.sip.SipStatus.prototype.getNluSessionName = function () {
+	return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ''));
+};
+
+/**
+ * @param {string} value
+ * @return {!proto.ondewo.sip.SipStatus} returns this
+ */
+proto.ondewo.sip.SipStatus.prototype.setNluSessionName = function (value) {
+	return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 /**
