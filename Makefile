@@ -18,7 +18,7 @@ export
 ONDEWO_SIP_VERSION = 5.1.0
 
 SIP_API_GIT_BRANCH=tags/5.1.0
-ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/4.6.0
+ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/4.8.0
 ONDEWO_PROTO_COMPILER_DIR=ondewo-proto-compiler
 SIP_APIS_DIR=src/ondewo-sip-api
 SIP_PROTOS_DIR=${SIP_APIS_DIR}/ondewo
@@ -76,6 +76,7 @@ check_build: ## Checks if all proto-code was generated
 	@for proto in `find src/ondewo-sip-api/ondewo -iname "*.proto*"`; \
 	do \
 		cat $${proto} | grep import | grep "google/" | cut -d "/" -f 3 | cut -d "." -f 1 >> build_check.txt; \
+		sed -i 's/import.*//g' build_check.txt; \
 		echo $${proto} | cut -d "/" -f 5 | cut -d "." -f 1 >> build_check.txt; \
 	done
 	@echo "`sort build_check.txt | uniq`" > build_check.txt
@@ -187,7 +188,6 @@ spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
 	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
 
-
 ########################################################
 # Build
 
@@ -209,7 +209,6 @@ build: check_out_correct_submodule_versions build_compiler update_package npm_ru
 	@sed -i "${DELETE_LINES}d" npm/README.md
 	make install_dependencies
 
-
 remove_npm_script: ## Removes script-section from npm-package.json
 	$(eval script_lines:= $(shell cat package.json | sed -n '/\"scripts\"/,/\}\,/='))
 	$(eval start:= $(shell echo $(script_lines) | cut -c 1-2))
@@ -226,11 +225,12 @@ create_npm_package: ## Creates NPM Folder
 	cp LICENSE npm
 	cp README.md npm
 
-install_dependencies: ## Installs Dev-dependencies
-	npm i eslint --save-dev
-	npm i prettier --save-dev
-	npm i @typescript-eslint/eslint-plugin --save-dev
-	npm i husky --save-dev
+install_dependencies: ## Installs Dev-Dependencies
+	npm i @typescript-eslint/eslint-plugin \
+		  eslint \
+		  prettier \
+		  husky \
+		  --save-dev
 
 check_out_correct_submodule_versions: ## Fetches all Submodules and checksout specified branch
 	@echo "START checking out correct submodule versions ..."
@@ -240,7 +240,6 @@ check_out_correct_submodule_versions: ## Fetches all Submodules and checksout sp
 	git -C ${ONDEWO_PROTO_COMPILER_DIR} fetch --all
 	git -C ${ONDEWO_PROTO_COMPILER_DIR} checkout ${ONDEWO_PROTO_COMPILER_GIT_BRANCH}
 	@echo "DONE checking out correct submodule versions."
-
 
 npm_run_build: ## Runs the build command in package.json
 	@echo "START npm run build ..."
