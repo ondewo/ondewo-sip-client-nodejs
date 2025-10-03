@@ -258,5 +258,5 @@ sipUnMute: {
   },
 };
 
-exports.SipClient = grpc.makeGenericClientConstructor(SipService);
+exports.SipClient = grpc.makeGenericClientConstructor(SipService, 'Sip');
 // SIP LifeCycle is explained at <a href="https://thanhloi2603.wordpress.com/2017/06/10/sip-lifecycle-overview/">here</a>
