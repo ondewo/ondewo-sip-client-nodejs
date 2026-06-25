@@ -16,7 +16,16 @@ const compat = new FlatCompat({
 
 export default [
 	{
-		ignores: ['**/api/', 'src/ondewo-sip-api', '**/ondewo-proto-compiler', '**/*.mjs']
+		ignores: [
+			'**/api/',
+			'src/ondewo-sip-api',
+			'**/ondewo-proto-compiler',
+			'**/*.mjs',
+			// generated from auth/*.ts by tsc (committed for npm packaging) — lint the .ts source, not the build output
+			'auth/*.js',
+			'auth/*.d.ts',
+			'dist/'
+		]
 	},
 	...compat.extends(
 		'plugin:@typescript-eslint/recommended',
