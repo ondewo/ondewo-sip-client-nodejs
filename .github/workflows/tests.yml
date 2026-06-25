@@ -17,7 +17,7 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund --legacy-peer-deps
 
       # The repo is ~95% generated gRPC/protobuf stubs; coverage is gated on the HAND-WRITTEN surface
       # (the D18 Keycloak offline-token auth provider). The test compiles the TS provider + spec and runs
