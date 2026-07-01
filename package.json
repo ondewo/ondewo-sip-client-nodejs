@@ -17,7 +17,9 @@
 	"typings": "public-api.d.ts",
 	"scripts": {
 		"pretest": "tsc auth/offlineTokenProvider.ts auth/offlineTokenProvider.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
-		"test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '**/offlineTokenProvider.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/offlineTokenProvider.spec.js"
+		"test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '**/offlineTokenProvider.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/offlineTokenProvider.spec.js && npm run test:examples",
+		"pretest:examples": "tsc examples/sipGetStatusExample.ts examples/sipGetStatusExample.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --rootDir . --outDir .test-build",
+		"test:examples": "node --test .test-build/examples/sipGetStatusExample.spec.js"
 	},
 	"repository": {
 		"type": "git",
