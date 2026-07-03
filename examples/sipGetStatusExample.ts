@@ -57,7 +57,7 @@ export interface SipStatusReader {
 }
 
 /** The gRPC metadata key carrying the `Bearer <token>` value for every authenticated call. */
-const AUTHORIZATION_METADATA_KEY: string = 'authorization';
+const AUTHORIZATION_METADATA_KEY: string = 'Authorization';
 
 /**
  * Call `SipGetSipStatus` with the SDK bearer token attached as `authorization` metadata, adapting the

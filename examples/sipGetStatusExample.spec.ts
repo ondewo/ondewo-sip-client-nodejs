@@ -28,7 +28,7 @@ import type { SipStatus } from '../api/ondewo/sip/sip_pb';
 import { getSipStatus, type SipStatusReader } from './sipGetStatusExample';
 
 /** The gRPC metadata key the example must attach the bearer token under. */
-const AUTHORIZATION_KEY: string = 'authorization';
+const AUTHORIZATION_KEY: string = 'Authorization';
 /** The bearer header value fed to `getSipStatus` and expected on the wire. */
 const BEARER_HEADER: string = 'Bearer test-access-token';
 /** The account name the fake backend reports back. */
