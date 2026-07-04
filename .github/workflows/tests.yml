@@ -21,6 +21,6 @@ jobs:
 
       # The repo is ~95% generated gRPC/protobuf stubs; coverage is gated on the HAND-WRITTEN surface
       # (the D18 Keycloak offline-token auth provider). The test compiles the TS provider + spec and runs
-      # node's built-in test runner under c8 with a >=90% line-coverage gate.
-      - name: Unit tests + >=90% coverage gate on hand-written code
+      # node's built-in test runner under c8 with a 100% line-coverage gate.
+      - name: Unit tests + 100% coverage gate on hand-written code
         run: npm test

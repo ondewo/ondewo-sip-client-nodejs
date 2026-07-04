@@ -219,6 +219,7 @@ create_npm_package: ## Create NPM Package for Release
 	rm -rf npm
 	mkdir npm
 	cp -R api npm
+	cp -R auth npm
 	cp public-api.d.ts npm
 	cp public-api.js npm
 	cp package.json npm

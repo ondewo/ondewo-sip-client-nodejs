@@ -21,14 +21,14 @@
 import { test as runTestCase } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { Metadata, ServiceError } from '@grpc/grpc-js';
+import { Metadata, MetadataValue, ServiceError } from '@grpc/grpc-js';
 
 import type { Empty } from '../api/google/protobuf/empty_pb';
 import type { SipStatus } from '../api/ondewo/sip/sip_pb';
 import { getSipStatus, type SipStatusReader } from './sipGetStatusExample';
 
-/** The gRPC metadata key the example must attach the bearer token under. */
-const AUTHORIZATION_KEY: string = 'Authorization';
+/** The lowercase gRPC metadata key the example must attach the bearer token under. */
+const AUTHORIZATION_KEY: string = 'authorization';
 /** The bearer header value fed to `getSipStatus` and expected on the wire. */
 const BEARER_HEADER: string = 'Bearer test-access-token';
 /** The account name the fake backend reports back. */
@@ -144,6 +144,11 @@ runTestCase('getSipStatus attaches the bearer header, forwards the request, and 
 	assert.equal(stub.calls.length, 1);
 	assert.equal(stub.calls[0].request, request);
 	assert.deepEqual(stub.calls[0].metadata.get(AUTHORIZATION_KEY), [BEARER_HEADER]);
+	// The bearer token MUST be attached under the lowercase 'authorization' key: native gRPC
+	// transports normalize/expect lowercase ASCII metadata keys. Assert the stored key is lowercase.
+	const metadataMap: { [key: string]: MetadataValue } = stub.calls[0].metadata.getMap();
+	assert.equal(metadataMap[AUTHORIZATION_KEY], BEARER_HEADER);
+	assert.equal(metadataMap['Authorization'], undefined);
 
 	assert.equal(status.getAccountName(), EXPECTED_ACCOUNT);
 	assert.equal(status.getDescription(), EXPECTED_DESCRIPTION);

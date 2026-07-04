@@ -56,8 +56,10 @@ export interface SipStatusReader {
 	): unknown;
 }
 
+// gRPC metadata keys must be lowercase ('authorization', not 'Authorization'): native gRPC
+// transports normalize/expect lowercase ASCII keys, matching the other ONDEWO client SDKs.
 /** The gRPC metadata key carrying the `Bearer <token>` value for every authenticated call. */
-const AUTHORIZATION_METADATA_KEY: string = 'Authorization';
+const AUTHORIZATION_METADATA_KEY: string = 'authorization';
 
 /**
  * Call `SipGetSipStatus` with the SDK bearer token attached as `authorization` metadata, adapting the
