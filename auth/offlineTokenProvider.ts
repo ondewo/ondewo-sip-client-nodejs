@@ -58,6 +58,13 @@ export interface TokenFetchInit {
 	headers: Record<string, string>;
 	/** The form-encoded request body. */
 	body: string;
+	/**
+	 * Optional undici dispatcher (Node's non-standard `fetch` extension). Set only on the
+	 * default transport when `keycloakVerifySsl` is `false`; carries an
+	 * `Agent({ connect: { rejectUnauthorized: false } })` so the token request skips TLS
+	 * certificate verification. Left `undefined` on the secure default path.
+	 */
+	dispatcher?: unknown;
 }
 
 /**
@@ -95,6 +102,14 @@ export interface OfflineTokenLoginOptions {
 	tokenExpirationInS?: number;
 	/** Optional fetch override (tests inject a mock); defaults to the global fetch. */
 	fetchImpl?: TokenFetch;
+	/**
+	 * When `false`, DISABLE TLS certificate verification on the Keycloak token request
+	 * (opt-in insecure, for a self-signed local Envoy at `https://localhost:12001/auth`).
+	 * Defaults to `true` (verify -- secure, unchanged behaviour). Ignored when a custom
+	 * `fetchImpl` is injected. Node-only: implemented via an undici dispatcher, so it is a
+	 * no-op in a browser bundle.
+	 */
+	keycloakVerifySsl?: boolean;
 	/** Optional clock override returning epoch ms (tests); defaults to Date.now. */
 	nowInMs?: () => number;
 }
@@ -167,6 +182,31 @@ async function postTokenRequest(
 }
 
 /**
+ * Build the default {@link TokenFetch}: delegate to the global `fetch` (Node >= 18).
+ *
+ * When `verifySsl` is `false`, a cached undici `Agent` with `rejectUnauthorized: false` is attached
+ * to every request as its `dispatcher`, so the Keycloak token call skips TLS certificate verification
+ * (opt-in insecure; Node-only). The dispatcher is built once here and reused for all requests this
+ * transport makes (login + refreshes); the secure default never loads undici.
+ *
+ * @param verifySsl - Whether to verify the Keycloak server's TLS certificate.
+ * @returns A fetch layer bound to the chosen TLS-verification behaviour.
+ */
+function createDefaultFetch(verifySsl: boolean): TokenFetch {
+	let dispatcher: unknown;
+	if (!verifySsl) {
+		// Lazy require keeps undici out of the default (secure) code path.
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const { Agent } = require('undici') as { Agent: new (options: unknown) => unknown };
+		dispatcher = new Agent({ connect: { rejectUnauthorized: false } });
+	}
+	return (url: string, init: TokenFetchInit): Promise<TokenFetchResponse> => {
+		const globalFetch: TokenFetch = globalThis.fetch;
+		return globalFetch(url, dispatcher === undefined ? init : { ...init, dispatcher });
+	};
+}
+
+/**
  * A live access-token holder backed by a bounded auto-refresh loop. Obtain one from {@link login};
  * read {@link getAuthorizationHeader} for the gRPC `Authorization` metadata and call {@link stop} when done.
  */
@@ -194,7 +234,8 @@ export class OfflineTokenProvider {
 		this.tokenEndpoint = buildTokenEndpoint(options.keycloakUrl, options.realm);
 		this.clientId = options.clientId;
 		this.tokenExpirationInS = options.tokenExpirationInS;
-		this.fetchImpl = options.fetchImpl !== undefined ? options.fetchImpl : globalThis.fetch;
+		this.fetchImpl =
+			options.fetchImpl !== undefined ? options.fetchImpl : createDefaultFetch(options.keycloakVerifySsl ?? true);
 		this.nowInMs = options.nowInMs !== undefined ? options.nowInMs : Date.now;
 
 		this.accessToken = null;
