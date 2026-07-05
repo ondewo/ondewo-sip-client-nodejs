@@ -121,9 +121,9 @@ function deserialize_ondewo_sip_SipTransferCallRequest(buffer_arg) {
 }
 
 
-// ONDEWO-SIP API available at <a href="https://github.com/ondewo/ondewo-sip-api>">GitHub</a>
+// <p>ONDEWO-SIP API available at <a href="https://github.com/ondewo/ondewo-sip-api">GitHub</a></p>
 var SipService = exports.SipService = {
-  // Starts a new SIP session for an account registered at a SIP server. <code>RegisterAccount</code> need to be called before.
+  // <p>Starts a new SIP session for an account registered at a SIP server. <code>RegisterAccount</code> need to be called before.</p>
 sipStartSession: {
     path: '/ondewo.sip.Sip/SipStartSession',
     requestStream: false,
@@ -135,7 +135,7 @@ sipStartSession: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Ends a SIP session for an account registered at a SIP server
+  // <p>Ends a SIP session for an account registered at a SIP server</p>
 sipEndSession: {
     path: '/ondewo.sip.Sip/SipEndSession',
     requestStream: false,
@@ -147,7 +147,7 @@ sipEndSession: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Starts a call in an active SIP session for an account registered at a SIP server
+  // <p>Starts a call in an active SIP session for an account registered at a SIP server</p>
 sipStartCall: {
     path: '/ondewo.sip.Sip/SipStartCall',
     requestStream: false,
@@ -159,7 +159,7 @@ sipStartCall: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Ends a call in an active SIP session for an account registered at a SIP server
+  // <p>Ends a call in an active SIP session for an account registered at a SIP server</p>
 sipEndCall: {
     path: '/ondewo.sip.Sip/SipEndCall',
     requestStream: false,
@@ -171,8 +171,7 @@ sipEndCall: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Transfers a call in an active SIP session for an account registered at a SIP server to
-// another SIP account or phone number specified by <code>transfer_id</code>
+  // <p>Transfers a call in an active SIP session for an account registered at a SIP server to another SIP account or phone number specified by <code>transfer_id</code></p>
 sipTransferCall: {
     path: '/ondewo.sip.Sip/SipTransferCall',
     requestStream: false,
@@ -184,7 +183,7 @@ sipTransferCall: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Registers s SIP account at a SIP server
+  // <p>Registers s SIP account at a SIP server</p>
 sipRegisterAccount: {
     path: '/ondewo.sip.Sip/SipRegisterAccount',
     requestStream: false,
@@ -196,7 +195,7 @@ sipRegisterAccount: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Gets the current SIP status
+  // <p>Gets the current SIP status</p>
 sipGetSipStatus: {
     path: '/ondewo.sip.Sip/SipGetSipStatus',
     requestStream: false,
@@ -208,7 +207,7 @@ sipGetSipStatus: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Gets the history of SIP status
+  // <p>Gets the history of SIP status</p>
 sipGetSipStatusHistory: {
     path: '/ondewo.sip.Sip/SipGetSipStatusHistory',
     requestStream: false,
@@ -220,7 +219,7 @@ sipGetSipStatusHistory: {
     responseSerialize: serialize_ondewo_sip_SipStatusHistoryResponse,
     responseDeserialize: deserialize_ondewo_sip_SipStatusHistoryResponse,
   },
-  // Plays wav files during an ongoing call of an active SIP session
+  // <p>Plays wav files during an ongoing call of an active SIP session</p>
 sipPlayWavFiles: {
     path: '/ondewo.sip.Sip/SipPlayWavFiles',
     requestStream: false,
@@ -232,7 +231,7 @@ sipPlayWavFiles: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Mutes the microphone in an ongoing call of an active SIP session
+  // <p>Mutes the microphone in an ongoing call of an active SIP session</p>
 sipMute: {
     path: '/ondewo.sip.Sip/SipMute',
     requestStream: false,
@@ -244,7 +243,7 @@ sipMute: {
     responseSerialize: serialize_ondewo_sip_SipStatus,
     responseDeserialize: deserialize_ondewo_sip_SipStatus,
   },
-  // Un-mutes the microphone in an ongoing call of an active SIP session
+  // <p>Un-mutes the microphone in an ongoing call of an active SIP session</p>
 sipUnMute: {
     path: '/ondewo.sip.Sip/SipUnMute',
     requestStream: false,
@@ -259,4 +258,4 @@ sipUnMute: {
 };
 
 exports.SipClient = grpc.makeGenericClientConstructor(SipService, 'Sip');
-// SIP LifeCycle is explained at <a href="https://thanhloi2603.wordpress.com/2017/06/10/sip-lifecycle-overview/">here</a>
+// <p>SIP LifeCycle is explained at <a href="https://thanhloi2603.wordpress.com/2017/06/10/sip-lifecycle-overview/">here</a></p>

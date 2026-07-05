@@ -14,3 +14,9 @@ src/
 ondewo-proto-compiler
 
 ondewo-sip-api
+package-lock.json
+package.json
+npm/
+dist/
+.test-build/
+.test-build-examples/

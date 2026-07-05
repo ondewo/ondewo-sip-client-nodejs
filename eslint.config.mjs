@@ -17,6 +17,14 @@ const compat = new FlatCompat({
 export default [
 	{
 		ignores: [
+			'**/*.spec.ts',
+			'npm/auth/offlineTokenProvider.d.ts',
+			'npm/auth/offlineTokenProvider.js',
+			'.test-build/auth/offlineTokenProvider.js',
+			'.test-build/examples/sipGetStatusExample.js',
+			'.test-build/examples/sipGetStatusExample.spec.js',
+			'.test-build/offlineTokenProvider.js',
+			'.test-build/offlineTokenProvider.spec.js',
 			'**/api/',
 			'src/ondewo-sip-api',
 			'**/ondewo-proto-compiler',
