@@ -21,11 +21,20 @@
 // on a minimal structural view of the client (`SipStatusReader`) so it can be unit-tested with a fake
 // -- see `sipGetStatusExample.spec.ts`. The runnable `main` wires the real generated stubs.
 //
-// Run it against a live stack (all inputs default to a local dev stack):
-//   ONDEWO_SIP_USERNAME=... ONDEWO_SIP_PASSWORD=... ONDEWO_SIP_GRPC_HOST=localhost:50053 \
-//   node .test-build/sipGetStatusExample.js
+// Run it against a live stack: fill in the credentials in `examples/environment.env` (loaded below via
+// dotenv) or export the canonical env vars (KEYCLOAK_USER_NAME, KEYCLOAK_PASSWORD, ONDEWO_HOST,
+// ONDEWO_PORT, ...) and run:
+//   node .test-build/examples/sipGetStatusExample.js
 
+import * as fs from 'fs';
+import * as path from 'path';
+
+import * as dotenv from 'dotenv';
 import { ChannelCredentials, credentials, Metadata, ServiceError } from '@grpc/grpc-js';
+
+// Load the example configuration from the committed template next to this script so the example reads
+// the same canonical env vars regardless of the current working directory.
+dotenv.config({ path: path.join(__dirname, 'environment.env') });
 
 // The generated protobuf/gRPC stubs and the auth provider are imported for their TYPES only (erased at
 // compile time); the runtime values are pulled in via `require` inside `main` so this file stays a
@@ -116,6 +125,28 @@ interface AuthModule {
 }
 
 /**
+ * Build the gRPC channel credentials from the canonical env vars: an insecure channel by default, or a
+ * TLS channel when `ONDEWO_USE_SECURE_CHANNEL` is `true` (optionally pinning `ONDEWO_GRPC_CERT`).
+ *
+ * @returns The channel credentials to construct the `SipClient` with.
+ */
+function createChannelCredentials(): ChannelCredentials {
+	const useSecureChannel: boolean = (process.env.ONDEWO_USE_SECURE_CHANNEL ?? 'false').toLowerCase() === 'true';
+	if (!useSecureChannel) {
+		console.log('Using an insecure gRPC channel (ONDEWO_USE_SECURE_CHANNEL is not "true")');
+		return credentials.createInsecure();
+	}
+	const certificatePath: string | undefined = process.env.ONDEWO_GRPC_CERT;
+	if (certificatePath === undefined || certificatePath === '') {
+		console.log('Using a secure gRPC channel with the system default root certificates');
+		return credentials.createSsl();
+	}
+	console.log(`Using a secure gRPC channel with the root certificate at ${certificatePath}`);
+	const rootCertificate: Buffer = fs.readFileSync(certificatePath);
+	return credentials.createSsl(rootCertificate);
+}
+
+/**
  * Runnable entry point: log in via the D18 offline-token flow, construct the real generated
  * `SipClient`, query the SIP status, print it, then stop the background token refresh.
  *
@@ -131,24 +162,34 @@ async function main(): Promise<void> {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const emptyModule: EmptyModule = require('../../api/google/protobuf/empty_pb') as EmptyModule;
 
-	const loginOptions: OfflineTokenLoginOptions = {
-		keycloakUrl: process.env.ONDEWO_SIP_KEYCLOAK_URL ?? 'https://auth.example.com/auth',
-		realm: process.env.ONDEWO_SIP_KEYCLOAK_REALM ?? 'ondewo-ccai-platform',
-		clientId: process.env.ONDEWO_SIP_KEYCLOAK_CLIENT_ID ?? 'ondewo-sip-cai-sdk-public',
-		username: process.env.ONDEWO_SIP_USERNAME ?? '',
-		password: process.env.ONDEWO_SIP_PASSWORD ?? ''
-	};
-	const tokenProvider: OfflineTokenProvider = await authModule.login(loginOptions);
+	const keycloakUrl: string = process.env.KEYCLOAK_URL ?? 'https://auth.example.com/auth';
+	const realm: string = process.env.KEYCLOAK_REALM ?? 'ondewo-ccai-platform';
+	const clientId: string = process.env.KEYCLOAK_CLIENT_ID ?? 'ondewo-sip-cai-sdk-public';
+	const host: string = process.env.ONDEWO_HOST ?? 'localhost';
+	const port: string = process.env.ONDEWO_PORT ?? '50053';
+	const address: string = `${host}:${port}`;
 
-	const address: string = process.env.ONDEWO_SIP_GRPC_HOST ?? 'localhost:50053';
-	const channelCredentials: ChannelCredentials = credentials.createInsecure();
+	const loginOptions: OfflineTokenLoginOptions = {
+		keycloakUrl: keycloakUrl,
+		realm: realm,
+		clientId: clientId,
+		username: process.env.KEYCLOAK_USER_NAME ?? '',
+		password: process.env.KEYCLOAK_PASSWORD ?? ''
+	};
+
+	console.log(`START: logging in to Keycloak realm '${realm}' at ${keycloakUrl} as client '${clientId}'`);
+	const tokenProvider: OfflineTokenProvider = await authModule.login(loginOptions);
+	console.log('DONE: obtained offline token; the SIP client is authenticated');
+
+	const channelCredentials: ChannelCredentials = createChannelCredentials();
 	const client: SipStatusReader = new sipGrpcModule.SipClient(address, channelCredentials);
 	const request: Empty = new emptyModule.Empty();
 
 	try {
+		console.log(`START: calling SipGetSipStatus at ${address}`);
 		const status: SipStatus = await getSipStatus(client, request, tokenProvider.getAuthorizationHeader());
 		console.log(
-			`SIP status: account=${status.getAccountName()} statusType=${status.getStatusType()} ` +
+			`DONE: SIP status: account=${status.getAccountName()} statusType=${status.getStatusType()} ` +
 				`description=${status.getDescription()}`
 		);
 	} finally {
@@ -158,7 +199,14 @@ async function main(): Promise<void> {
 
 if (require.main === module) {
 	void main().catch((error: unknown): void => {
-		console.error(error);
-		process.exitCode = 1;
+		if (error instanceof Error && 'code' in error && 'details' in error) {
+			const serviceError: ServiceError = error as ServiceError;
+			console.error(
+				`FAILED: sipGetSipStatus RPC failed with gRPC code=${serviceError.code} details=${serviceError.details}`
+			);
+		} else {
+			console.error('FAILED: sipGetStatusExample encountered an error:', error);
+		}
+		process.exit(1);
 	});
 }
