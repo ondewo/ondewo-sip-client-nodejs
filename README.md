@@ -97,23 +97,30 @@ The repository is published to GitHub and NPM by the Automated Release Process o
 TODO after PR merge:
 
 - checkout master
+
   ```shell
   git checkout master
   ```
+
 - pull newest state
+
   ```shell
   git pull
   ```
+
 - Adjust `ONDEWO_SIP_VERSION` in the `Makefile` <br><br>
 - Add new Release Notes to `src/RELEASE.md` in following format:
-  ```
+
+  ```text
   ## Release ONDEWO SIP Nodejs Client X.X.X    <----- Beginning of Notes
 
   ...<NOTES>...
 
   *****************                             <----- End of Notes
   ```
+
 - release
+
   ```shell
   make ondewo_release
   ```
