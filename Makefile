@@ -14,7 +14,7 @@ export
 # 		Variables
 ########################################################
 
-ONDEWO_SIP_VERSION = 5.3.0
+ONDEWO_SIP_VERSION=5.3.0
 
 SIP_API_GIT_BRANCH=OND211-2418-add-keycloak-for-2-fa
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.10.0
