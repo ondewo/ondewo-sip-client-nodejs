@@ -14,10 +14,10 @@ export
 # 		Variables
 ########################################################
 
-ONDEWO_SIP_VERSION=5.3.0
+ONDEWO_SIP_VERSION=5.4.0
 
-SIP_API_GIT_BRANCH=OND211-2418-add-keycloak-for-2-fa
-ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.10.0
+SIP_API_GIT_BRANCH=tags/5.4.0
+ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.11.0
 ONDEWO_PROTO_COMPILER_DIR=ondewo-proto-compiler
 SIP_APIS_DIR=src/ondewo-sip-api
 SIP_PROTOS_DIR=${SIP_APIS_DIR}/ondewo
