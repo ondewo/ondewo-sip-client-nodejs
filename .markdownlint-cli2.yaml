@@ -21,10 +21,10 @@ config:
   # slices out — do NOT strip them as "unused" reference definitions.
   MD053: false
 globs:
-  - "*.md"
+  - '*.md'
 ignores:
-  - "node_modules/**"
-  - "api/**"
-  - "src/ondewo-sip-api/**"
-  - "ondewo-proto-compiler/**"
-  - ".venv/**"
+  - 'node_modules/**'
+  - 'api/**'
+  - 'src/ondewo-sip-api/**'
+  - 'ondewo-proto-compiler/**'
+  - '.venv/**'
