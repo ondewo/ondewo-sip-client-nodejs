@@ -28,7 +28,7 @@ IMAGE_UTILS_NAME=ondewo-sip-client-utils-nodejs:${ONDEWO_SIP_VERSION}
 PRETTIER_WRITE?=
 
 CURRENT_RELEASE_NOTES=`cat RELEASE.md \
-	| perl -ne 'print if /Release ONDEWO SIP Nodejs Client ${ONDEWO_SIP_VERSION}/../\*\*/'`
+	| perl -ne 'print if /Release ONDEWO SIP Nodejs Client ${ONDEWO_SIP_VERSION}/../^\*{5}/'`
 
 GH_REPO="https://github.com/ondewo/ondewo-sip-client-nodejs"
 DEVOPS_ACCOUNT_GIT="ondewo-devops-accounts"
