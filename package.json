@@ -20,8 +20,8 @@
     "build": "docker run -v ${PWD}:/input-volume -v ${PWD}/..:/output-volume ondewo-nodejs-proto-compiler ondewo-sip-api ondewo",
     "predebug": "mv ondewo-sip-api/googleapis/google ondewo-sip-api/google",
     "debug": "docker run --entrypoint /bin/bash -v ${PWD}:/input-volume -v ${PWD}/..:/output-volume ondewo-nodejs-proto-compiler",
-    "pretest": "tsc auth/offlineTokenProvider.ts auth/offlineTokenProvider.spec.ts auth/grpcChannel.ts auth/grpcChannel.spec.ts tests/releaseNotes.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
-    "test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '**/offlineTokenProvider.js' --include '**/grpcChannel.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/auth/offlineTokenProvider.spec.js .test-build/auth/grpcChannel.spec.js .test-build/tests/releaseNotes.spec.js",
+    "pretest": "tsc auth/offlineTokenProvider.ts auth/offlineTokenProvider.spec.ts auth/grpcChannel.ts auth/grpcChannel.spec.ts tests/releaseNotes.spec.ts tests/entryPoint.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
+    "test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '.test-build/**/offlineTokenProvider.js' --include '.test-build/**/grpcChannel.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/auth/offlineTokenProvider.spec.js .test-build/auth/grpcChannel.spec.js .test-build/tests/releaseNotes.spec.js .test-build/tests/entryPoint.spec.js",
     "build:auth": "tsc auth/offlineTokenProvider.ts auth/grpcChannel.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --types node --typeRoots ./node_modules/@types --declaration --outDir auth"
   },
   "repository": {
