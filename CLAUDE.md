@@ -312,3 +312,11 @@ npm view <pkg> version ; git tag --list <version> ; gh release view <version> --
   30 s, 50 s at 10 s). Do not copy the Python keepalive into `DEFAULT_GRPC_CHANNEL_OPTIONS`.
 - `auth/grpcChannel.spec.ts` builds its PKI with the openssl CLI at test time and runs real handshakes against an
   in-process grpc-js server. `tests/releaseNotes.spec.ts` pins the RELEASE.md heading spelling and separators.
+
+## Package entry point (ondewo-proto-compiler >= 5.15.5)
+
+- `public-api.js` (the package `main`) is a generated CommonJS barrel (`reexport(require('./api/...'))`, first stub
+  keeps a shared name); `public-api.d.ts` keeps `export *` lines. Compiler <= 5.15.4 emitted `export * from` in the
+  `.js`, so `require('@ondewo/sip-client-nodejs')` failed with ERR_MODULE_NOT_FOUND. `tests/entryPoint.spec.ts`
+  `require()`s the package root in a child process on every CI Node version; do not regenerate with an older compiler.
+  The c8 gate includes only `.test-build/**`, so the committed `auth/*.js` loaded by that child are not measured.
