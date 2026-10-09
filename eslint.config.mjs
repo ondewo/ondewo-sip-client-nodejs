@@ -25,6 +25,8 @@ export default [
 			'.test-build/examples/sipGetStatusExample.spec.js',
 			'.test-build/offlineTokenProvider.js',
 			'.test-build/offlineTokenProvider.spec.js',
+			// tsc test output (package.json `pretest`); lint the .ts source, not the build output
+			'.test-build*/',
 			'**/api/',
 			'src/ondewo-sip-api',
 			'**/ondewo-proto-compiler',
