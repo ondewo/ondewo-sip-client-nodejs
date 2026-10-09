@@ -5,22 +5,39 @@ on:
     branches: ['**']
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   unit-tests:
+    name: tests (node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same matrix as ondewo-nlu-client-nodejs: 20 is the toolchain floor, 22 the current LTS, 24 the latest.
+        node-version: ['20', '22', '24']
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund --legacy-peer-deps
+      # `npm ci` installs exactly the lockfile and never rewrites package.json / package-lock.json.
+      - name: Install dependencies from the lockfile
+        run: npm ci --no-audit --no-fund
 
       # The repo is ~95% generated gRPC/protobuf stubs; coverage is gated on the HAND-WRITTEN surface
-      # (the D18 Keycloak offline-token auth provider). The test compiles the TS provider + spec and runs
-      # node's built-in test runner under c8 with a 100% line-coverage gate.
+      # (auth/offlineTokenProvider.ts and auth/grpcChannel.ts) plus the RELEASE.md slice spec.
       - name: Unit tests + 100% coverage gate on hand-written code
         run: npm test
+
+      # auth/*.js and auth/*.d.ts are tsc output that is COMMITTED because the npm package ships them, while
+      # the tests exercise the .ts source. Rebuild them and fail if the committed files differ.
+      - name: Committed auth build artifacts match their source
+        run: |
+          npm run build:auth
+          git diff --exit-code -- auth/
