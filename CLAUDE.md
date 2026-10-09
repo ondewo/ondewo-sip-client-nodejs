@@ -304,7 +304,9 @@ npm view <pkg> version ; git tag --list <version> ; gh release view <version> --
   `toString` / `inspect` / `JSON.stringify`; no message renders a PEM. Documented in README "TLS, mutual TLS and
   certificates" (edit `src/README.md`, the root copy is a build output).
 - It lives in `auth/` so the proto-compiler's `append-auth-exports.sh` re-exports it from `public-api.*` and
-  `create_npm_package` ships it. `auth/grpcChannel.js` / `.d.ts` are committed `npm run build:auth` output (build:auth compiles grpcChannel.ts only; the committed offlineTokenProvider.js predates its current source).
+  `create_npm_package` ships it. `auth/grpcChannel.js` / `auth/offlineTokenProvider.js` and their `.d.ts` are committed `npm run build:auth` output;
+  after editing either `.ts`, run `npm run build:auth` and commit the result. CI rebuilds them and fails on any
+  `git diff -- auth/` (they had drifted before: a 2026-07 build shipped an es2015 `__awaiter` compile of an older source).
 - `grpc.keepalive_time_ms` stays UNSET on purpose: grpc-js has no `grpc.http2.max_pings_without_data`, so it pings
   silent streams and a grpc-core server answers `GOAWAY too_many_pings` (measured RESOURCE_EXHAUSTED after 150 s at
   30 s, 50 s at 10 s). Do not copy the Python keepalive into `DEFAULT_GRPC_CHANNEL_OPTIONS`.
