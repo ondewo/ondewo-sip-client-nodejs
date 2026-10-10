@@ -2,6 +2,23 @@
 
 *****************
 
+## Release ONDEWO SIP Nodejs Client 5.5.0
+
+### New Features
+
+* [[OND211-2443]](https://ondewo.atlassian.net/browse/OND211-2443) Tracking API Version [5.5.0](https://github.com/ondewo/ondewo-sip-api/releases/tag/5.5.0) ( [Documentation](https://ondewo.github.io/ondewo-sip-api/) ), regenerated with ondewo-proto-compiler 5.15.5. The generated `SipClient` and messages now cover:
+  * Answering machine detection: status `OUTGOING_CALL_ANSWERING_MACHINE_DETECTED`, `AnsweringMachineDetectionResult`, `SipStatus.amd_result`, `SipEndCallRequest.end_reason` (`ANSWERING_MACHINE`, `ANSWERING_MACHINE_VOICE_MESSAGE_LEFT`) with `SipEndCallRequest.amd_result`, and the `SipReportAnsweringMachineDetected` RPC.
+  * Call identity: `SipStatus.call_id`; requests are scoped to a call with the `x-ondewo-expected-call-id` gRPC metadatum.
+  * `SipSetCallMediaControl`: call-scoped operator media control (mute the bot, pause its listening) as per-owner holds, incl. `participants_present`; the effective level is reported in `SipStatus.bot_muted` / `SipStatus.listening_paused`.
+  * `SipStreamCallAudio`: bidirectional live call audio (LISTEN, or TALK with a bot take-over), counted in `SipStatus.call_audio_streams`.
+  * Truthful transfers: `SipTransferCallRequest.outcome_timeout_ms`, `SipStatus.sip_response_code` and `EndCallReason.END_CALL_REASON_TRANSFERRED`.
+  * `SipGetSipStatus` and `SipGetSipStatusHistory` declare `idempotency_level = NO_SIDE_EFFECTS` in the proto.
+* [[OND211-2443]](https://ondewo.atlassian.net/browse/OND211-2443) `tests/entryPoint.spec.ts` pins that the package root exports the new messages and that `SipClient` carries every `Sip` RPC of API 5.5.0.
+
+The API change is purely additive: a client built against 5.4.x stays wire-compatible.
+
+*****************
+
 ## Release ONDEWO SIP Nodejs Client 5.4.2
 
 ### Improvements
