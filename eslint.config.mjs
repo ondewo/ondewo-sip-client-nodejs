@@ -17,6 +17,8 @@ const compat = new FlatCompat({
 export default [
 	{
 		ignores: [
+			// the npm/ release package is a build artifact copied from files that are linted at their source
+			'npm/',
 			'**/*.spec.ts',
 			'npm/auth/offlineTokenProvider.d.ts',
 			'npm/auth/offlineTokenProvider.js',
