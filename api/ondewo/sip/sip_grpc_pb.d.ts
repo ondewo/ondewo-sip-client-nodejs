@@ -21,6 +21,9 @@ interface ISipService extends grpc.ServiceDefinition<grpc.UntypedServiceImplemen
     sipPlayWavFiles: ISipService_ISipPlayWavFiles;
     sipMute: ISipService_ISipMute;
     sipUnMute: ISipService_ISipUnMute;
+    sipReportAnsweringMachineDetected: ISipService_ISipReportAnsweringMachineDetected;
+    sipSetCallMediaControl: ISipService_ISipSetCallMediaControl;
+    sipStreamCallAudio: ISipService_ISipStreamCallAudio;
 }
 
 interface ISipService_ISipStartSession extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipStartSessionRequest, ondewo_sip_sip_pb.SipStatus> {
@@ -122,6 +125,33 @@ interface ISipService_ISipUnMute extends grpc.MethodDefinition<google_protobuf_e
     responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
     responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
 }
+interface ISipService_ISipReportAnsweringMachineDetected extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, ondewo_sip_sip_pb.SipStatus> {
+    path: "/ondewo.sip.Sip/SipReportAnsweringMachineDetected";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest>;
+    requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest>;
+    responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
+    responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
+}
+interface ISipService_ISipSetCallMediaControl extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipSetCallMediaControlRequest, ondewo_sip_sip_pb.SipStatus> {
+    path: "/ondewo.sip.Sip/SipSetCallMediaControl";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipSetCallMediaControlRequest>;
+    requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipSetCallMediaControlRequest>;
+    responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
+    responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
+}
+interface ISipService_ISipStreamCallAudio extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse> {
+    path: "/ondewo.sip.Sip/SipStreamCallAudio";
+    requestStream: true;
+    responseStream: true;
+    requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipCallAudioRequest>;
+    requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipCallAudioRequest>;
+    responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipCallAudioResponse>;
+    responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipCallAudioResponse>;
+}
 
 export const SipService: ISipService;
 
@@ -137,6 +167,9 @@ export interface ISipServer {
     sipPlayWavFiles: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipPlayWavFilesRequest, ondewo_sip_sip_pb.SipStatus>;
     sipMute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
     sipUnMute: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, ondewo_sip_sip_pb.SipStatus>;
+    sipReportAnsweringMachineDetected: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, ondewo_sip_sip_pb.SipStatus>;
+    sipSetCallMediaControl: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipSetCallMediaControlRequest, ondewo_sip_sip_pb.SipStatus>;
+    sipStreamCallAudio: grpc.handleBidiStreamingCall<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
 }
 
 export interface ISipClient {
@@ -173,6 +206,15 @@ export interface ISipClient {
     sipUnMute(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
     sipUnMute(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
     sipUnMute(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipStreamCallAudio(): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    sipStreamCallAudio(options: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    sipStreamCallAudio(metadata: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
 }
 
 export class SipClient extends grpc.Client implements ISipClient {
@@ -210,4 +252,12 @@ export class SipClient extends grpc.Client implements ISipClient {
     public sipUnMute(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
     public sipUnMute(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
     public sipUnMute(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipReportAnsweringMachineDetected(request: ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipStreamCallAudio(options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    public sipStreamCallAudio(metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
 }

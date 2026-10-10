@@ -51,6 +51,17 @@ function exportedNames(): string[] {
 	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8' })) as string[];
 }
 
+/**
+ * `require()` the package root in a fresh Node process and list the RPCs of one generated client.
+ *
+ * @param client - Name of the generated client exported from the package root.
+ * @returns The method names of the client's service definition.
+ */
+function serviceMethods(client: string): string[] {
+	const script: string = `process.stdout.write(JSON.stringify(Object.keys(require(${JSON.stringify(REPO_ROOT)})[${JSON.stringify(client)}].service)))`;
+	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8' })) as string[];
+}
+
 describe('package entry point', () => {
 	it('package.json main is the CommonJS public-api.js', () => {
 		const manifest: { main?: string } = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as {
@@ -69,6 +80,11 @@ describe('package entry point', () => {
 		for (const name of [
 			'SipClient',
 			'SipStartCallRequest',
+			'SipReportAnsweringMachineDetectedRequest',
+			'AnsweringMachineDetectionResult',
+			'SipSetCallMediaControlRequest',
+			'SipCallAudioRequest',
+			'SipCallAudioResponse',
 			'createGrpcClient',
 			'createChannelCredentials',
 			'GrpcClientConfig',
@@ -77,5 +93,24 @@ describe('package entry point', () => {
 		]) {
 			assert.ok(names.includes(name), `${name} is not exported from the package root`);
 		}
+	});
+
+	it('the generated SipClient carries every Sip RPC of ondewo-sip-api 5.5.0', () => {
+		assert.deepEqual(serviceMethods('SipClient').sort(), [
+			'sipEndCall',
+			'sipEndSession',
+			'sipGetSipStatus',
+			'sipGetSipStatusHistory',
+			'sipMute',
+			'sipPlayWavFiles',
+			'sipRegisterAccount',
+			'sipReportAnsweringMachineDetected',
+			'sipSetCallMediaControl',
+			'sipStartCall',
+			'sipStartSession',
+			'sipStreamCallAudio',
+			'sipTransferCall',
+			'sipUnMute'
+		]);
 	});
 });
