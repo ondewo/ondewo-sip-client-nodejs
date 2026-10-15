@@ -20,9 +20,12 @@
     "build": "docker run -v ${PWD}:/input-volume -v ${PWD}/..:/output-volume ondewo-nodejs-proto-compiler ondewo-sip-api ondewo",
     "predebug": "mv ondewo-sip-api/googleapis/google ondewo-sip-api/google",
     "debug": "docker run --entrypoint /bin/bash -v ${PWD}:/input-volume -v ${PWD}/..:/output-volume ondewo-nodejs-proto-compiler",
-    "pretest": "tsc auth/offlineTokenProvider.ts auth/offlineTokenProvider.spec.ts auth/grpcChannel.ts auth/grpcChannel.spec.ts tests/releaseNotes.spec.ts tests/releaseCredentials.spec.ts tests/entryPoint.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
-    "test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '.test-build/**/offlineTokenProvider.js' --include '.test-build/**/grpcChannel.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/auth/offlineTokenProvider.spec.js .test-build/auth/grpcChannel.spec.js .test-build/tests/releaseNotes.spec.js .test-build/tests/releaseCredentials.spec.js .test-build/tests/entryPoint.spec.js",
-    "build:auth": "tsc auth/offlineTokenProvider.ts auth/grpcChannel.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --types node --typeRoots ./node_modules/@types --declaration --outDir auth"
+    "pretest": "tsc auth/offlineTokenProvider.ts auth/offlineTokenProvider.spec.ts auth/grpcChannel.ts auth/grpcChannel.spec.ts tests/releaseNotes.spec.ts tests/releaseCredentials.spec.ts tests/entryPoint.spec.ts tests/releaseProcess.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
+    "test": "c8 --check-coverage --lines 100 --branches 100 --functions 100 --include '.test-build/**/offlineTokenProvider.js' --include '.test-build/**/grpcChannel.js' --exclude '**/*.spec.js' --reporter text node --test .test-build/auth/offlineTokenProvider.spec.js .test-build/auth/grpcChannel.spec.js .test-build/tests/releaseNotes.spec.js .test-build/tests/releaseCredentials.spec.js .test-build/tests/entryPoint.spec.js .test-build/tests/releaseProcess.spec.js",
+    "build:auth": "tsc auth/offlineTokenProvider.ts auth/grpcChannel.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --types node --typeRoots ./node_modules/@types --declaration --outDir auth",
+    "pretest:examples": "tsc examples/sipGetStatusExample.ts examples/sipGetStatusExample.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --sourceMap --types node --typeRoots ./node_modules/@types --outDir .test-build",
+    "test:examples": "node --test .test-build/examples/sipGetStatusExample.spec.js",
+    "typecheck:examples": "tsc examples/sipGetStatusExample.ts examples/sipGetStatusExample.spec.ts --ignoreConfig --module commonjs --target es2020 --strict --lib es2020,dom --skipLibCheck --noEmit --types node --typeRoots ./node_modules/@types"
   },
   "repository": {
     "type": "git",
@@ -37,13 +40,16 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.71.1",
     "c8": "^11.0.0",
-    "eslint": "^9.39.5",
+    "eslint": "^10.12.0",
     "global": "^4.4.0",
     "husky": "^9.1.7",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "protobufjs": true
   }
 }

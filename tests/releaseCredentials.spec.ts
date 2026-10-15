@@ -88,24 +88,65 @@ runTestCase('make never expands a credential into a recipe line', () => {
 	assert.deepEqual(recipeLinesExpandingASecret(), []);
 });
 
-runTestCase('docker run forwards the credentials by name only', () => {
-	assert.equal(new RegExp(`(?:-e|--env)[\\s=]+${SECRET_NAME}=`).exec(MAKEFILE), null);
-	assert.match(recipeOf('release_to_github_via_docker_image'), /-e GITHUB_GH_TOKEN \\/);
-	assert.match(recipeOf('publish_npm_via_docker'), /-e NPM_AUTOMATION_TOKEN \\/);
+/** The targets whose docker run is handed the credentials file. */
+const CREDENTIALED_TARGETS: string[] = [
+	'release_preflight',
+	'publish_npm_via_docker',
+	'release_to_github_via_docker_image',
+	'release_verify'
+];
+
+runTestCase('credentials reach docker only through the RELEASE_ENV_FILE env-file, never by name or value', () => {
+	assert.equal(new RegExp(`(?:-e|--env)[\\s=]+${SECRET_NAME}\\b`).exec(MAKEFILE), null);
+	for (const target of ['publish_npm_via_docker', 'release_to_github_via_docker_image']) {
+		assert.ok(recipeOf(target).includes('docker run --rm --env-file "$(RELEASE_ENV_FILE)"'), target);
+	}
+	// These two also run on their own (the release driver), with only DEVOPS_ACCOUNT_DIR set.
+	for (const target of ['release_preflight', 'release_verify']) {
+		assert.ok(recipeOf(target).includes('@$(USE_CREDENTIALS_FILE) docker run --rm --env-file "$$env_file"'), target);
+	}
+	const withEnvFile: string[] = RECIPE_LINES.filter((line: string): boolean => line.includes('--env-file'));
+	assert.equal(withEnvFile.length, CREDENTIALED_TARGETS.length);
 });
 
-runTestCase('npm reads its token from the environment through .npmrc, never from its argv', () => {
-	assert.equal((MAKEFILE.match(/_authToken/g) ?? []).length, 1);
-	assert.ok(MAKEFILE.includes("npm config set '//registry.npmjs.org/:_authToken' '$${NPM_AUTOMATION_TOKEN}'"));
+runTestCase('a token in the caller environment is passed to no recipe', () => {
+	assert.match(MAKEFILE, /^unexport GITHUB_GH_TOKEN GH_TOKEN NPM_AUTOMATION_TOKEN$/m);
+	assert.equal(/^(?:GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN|GH_TOKEN)\s*[?:]?=/m.exec(MAKEFILE), null);
 });
 
-runTestCase('the devops release hands the credentials to the sub-make through its environment', () => {
-	const recipe: string = recipeOf('run_release_with_devops');
+runTestCase('the utils image carries no credential, not even a placeholder', () => {
+	const dockerfile: string = readFileSync(join(REPO_ROOT, 'Dockerfile.utils'), 'utf8');
+	assert.equal(new RegExp(`^\\s*(?:ENV|ARG)\\s+${SECRET_NAME}`, 'm').exec(dockerfile), null);
+});
+
+runTestCase('npm reads its token from the environment through a temporary userconfig, never from its argv', () => {
+	const tokenLines: string[] = RECIPE_LINES.filter((line: string): boolean => line.includes('_authToken'));
+	assert.equal(tokenLines.length, 2);
+	for (const line of tokenLines) {
+		assert.ok(line.includes('"//registry.npmjs.org/:_authToken=\\$${NPM_AUTOMATION_TOKEN}" > "$$cfg"'), line);
+	}
+});
+
+runTestCase('gh gets its token per call through GH_TOKEN and never logs in', () => {
+	assert.ok(!MAKEFILE.includes('gh auth login'));
+	const ghCalls: string[] = RECIPE_LINES.filter((line: string): boolean => /\bgh (?:api|release)\b/.test(line));
+	assert.ok(ghCalls.length >= 3);
+	for (const line of ghCalls) {
+		assert.ok(line.includes('GH_TOKEN="$$GITHUB_GH_TOKEN" gh '), line);
+	}
+});
+
+runTestCase('the devops release writes the credentials to a file and never into the environment of the release', () => {
+	const recipe: string = recipeOf('ondewo_release');
 	assert.ok(!recipe.includes('$(info)'));
 	assert.ok(!recipe.includes('$(shell'));
-	assert.ok(recipe.includes('set -a'));
-	assert.ok(recipe.includes("grep -h -E '^(GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN)='"));
-	assert.match(recipe, /\$\(MAKE\) release$/);
+	assert.ok(!recipe.includes('set -a'));
+	assert.ok(recipe.includes('\t$(WRITE_CREDENTIALS); \\'));
+	// the values are evaluated inside a ( subshell ) whose only output is the 0600 mktemp file
+	const write: string = (MAKEFILE.match(/^WRITE_CREDENTIALS=.*\n.*$/m) ?? [''])[0];
+	assert.ok(write.includes("grep -h -E '^(GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN)='"));
+	assert.match(write, /^WRITE_CREDENTIALS=\( eval "\$\$\(grep [^\n]*\n[^\n]*\) > "\$\$env_file"$/);
+	assert.match(recipe, /\$\(MAKE\) release RELEASE_ENV_FILE="\$\$env_file"$/);
 	assert.equal(/\bmake\b[^\n]*\$\(info\)/.exec(MAKEFILE), null);
 	assert.equal(new RegExp(`(?:\\bmake|\\$\\(MAKE\\))[^\\n]*\\b${SECRET_NAME}=`).exec(RECIPE_LINES.join('\n')), null);
 });

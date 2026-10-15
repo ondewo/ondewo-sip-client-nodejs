@@ -3,6 +3,7 @@ name: tests
 on:
   push:
     branches: ['**']
+    tags: ['*']
   pull_request:
 
 permissions:
@@ -11,27 +12,39 @@ permissions:
 jobs:
   unit-tests:
     name: tests (node ${{ matrix.node-version }})
-    runs-on: ubuntu-latest
+    # Pinned instead of ubuntu-latest, whose move to a new Ubuntu release is announced on every job.
+    runs-on: ubuntu-24.04
+    # actions/checkout runs a plain `git init`, and git prints a multi-line default-branch hint when
+    # init.defaultBranch is unset. Setting it through the environment reaches every git the job runs.
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: init.defaultBranch
+      GIT_CONFIG_VALUE_0: master
     strategy:
       fail-fast: false
       matrix:
         # Same matrix as ondewo-nlu-client-nodejs: 20 is the toolchain floor, 22 the current LTS, 24 the latest.
         node-version: ['20', '22', '24']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
+
+      # tests/entryPoint.spec.ts derives the expected RPCs of every client from the pinned protos.
+      - name: Check out the pinned ondewo-sip-api submodule
+        run: git submodule update --init src/ondewo-sip-api
 
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # `npm ci` installs exactly the lockfile and never rewrites package.json / package-lock.json.
+      # `npm ci`, never `npm install`: it installs exactly the lockfile and fails if package.json and
+      # package-lock.json disagree, instead of silently re-resolving.
       - name: Install dependencies from the lockfile
         run: npm ci --no-audit --no-fund
 
       # The repo is ~95% generated gRPC/protobuf stubs; coverage is gated on the HAND-WRITTEN surface
-      # (auth/offlineTokenProvider.ts and auth/grpcChannel.ts) plus the RELEASE.md slice spec.
+      # (auth/offlineTokenProvider.ts and auth/grpcChannel.ts) plus the release, entry-point and RELEASE.md specs.
       - name: Unit tests + 100% coverage gate on hand-written code
         run: npm test
 
@@ -41,3 +54,8 @@ jobs:
         run: |
           npm run build:auth
           git diff --exit-code -- auth/
+
+      - name: Typecheck + run example mock tests
+        run: |
+          npm run typecheck:examples
+          npm run test:examples

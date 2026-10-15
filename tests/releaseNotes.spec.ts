@@ -13,12 +13,14 @@
 // limitations under the License.
 
 // The GitHub release body is sliced out of RELEASE.md by the Makefile's CURRENT_RELEASE_NOTES:
-// perl -ne 'print if /Release ONDEWO SIP Nodejs Client ${ONDEWO_SIP_VERSION}/../^\*{5}/'
-// The slice starts at the heading naming the version and ends at the next `*****` line. A heading
-// spelled any other way gives an EMPTY slice, and `gh release create -n ""` then publishes a release
-// without notes and without an error; a section without its separator runs into the next release.
+// perl -ne 'print if /^#+ Release ONDEWO SIP Nodejs Client \Q${ONDEWO_SIP_VERSION}\E$/../^\*{5}/'
+// The slice starts at the heading naming exactly that version (anchored, the dots taken literally) and
+// ends at the next `*****` line. A heading spelled any other way gives an EMPTY slice, which the release
+// refuses (release_preflight and release_to_github_via_docker_image); a section without its separator
+// runs into the next release.
 
 import { strict as assert } from 'assert';
+import { execFileSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { describe, it } from 'node:test';
@@ -48,14 +50,13 @@ const SEPARATOR: RegExp = /^\*{5}/;
 const LINES: string[] = RELEASE_NOTES.split('\n');
 
 /**
- * Reproduce the Makefile's perl flip-flop range `/<SLICE_TEXT> <version>/../^\*{5}/` (the version's
- * dots stay regex wildcards, exactly as perl sees them).
+ * Reproduce the Makefile's perl flip-flop range `/^#+ <SLICE_TEXT> \Q<version>\E$/../^\*{5}/`.
  *
  * @param version - The release version.
  * @returns The lines perl prints.
  */
 function releaseNotesSlice(version: string): string[] {
-	const start: RegExp = new RegExp(`${SLICE_TEXT} ${version}`);
+	const start: RegExp = new RegExp(`^#+ ${SLICE_TEXT} ${version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
 	const printed: string[] = [];
 	let inRange: boolean = false;
 	for (const line of LINES) {
@@ -79,11 +80,36 @@ const HEADINGS: string[] = LINES.filter((line: string): boolean => /Release ONDE
 const VERSIONS: string[] = HEADINGS.map((line: string): string => line.slice(HEADING_PREFIX.length).trim());
 
 describe('RELEASE.md and the release-notes slice', () => {
-	it('the Makefile slices the heading spelling pinned here, up to the ***** separator', () => {
+	it('the Makefile slices the heading spelling pinned here, anchored, up to the ***** separator', () => {
 		assert.ok(
-			MAKEFILE.includes(`perl -ne 'print if /${SLICE_TEXT} \${ONDEWO_SIP_VERSION}/../^\\*{5}/'`),
-			'CURRENT_RELEASE_NOTES must slice RELEASE.md with the pinned perl range'
+			MAKEFILE.includes(`RELEASE_NOTES_RANGE=/^\\#+ ${SLICE_TEXT} \\Q\${ONDEWO_SIP_VERSION}\\E$$/../^\\*{5}/\n`),
+			'RELEASE_NOTES_RANGE must be the pinned, anchored perl range'
 		);
+		assert.ok(MAKEFILE.includes(`| perl -ne 'print if $(RELEASE_NOTES_RANGE)'\``), 'CURRENT_RELEASE_NOTES must use it');
+	});
+
+	it('the Makefile range, run by perl, takes the version literally and anchored', () => {
+		const range: string = (MAKEFILE.match(/^RELEASE_NOTES_RANGE=(.*)$/m) ?? ['', ''])[1]
+			.replace(/\\#/g, '#')
+			.replace(/\$\$/g, '$')
+			.replace('${ONDEWO_SIP_VERSION}', '9.1.0');
+		const input: string = [
+			'## Release ONDEWO SIP Nodejs Client 19.1.0',
+			'wrong: a longer version',
+			'*****',
+			'## Release ONDEWO SIP Nodejs Client 9x1y0',
+			'wrong: the dots are not wildcards',
+			'*****',
+			'## Release ONDEWO SIP Nodejs Client 9.1.0 draft',
+			'wrong: the heading is anchored at its end',
+			'*****',
+			'## Release ONDEWO SIP Nodejs Client 9.1.0',
+			'right',
+			'*****',
+			''
+		].join('\n');
+		const printed: string = execFileSync('perl', ['-ne', `print if ${range}`], { input, encoding: 'utf8' });
+		assert.equal(printed, '## Release ONDEWO SIP Nodejs Client 9.1.0\nright\n*****\n');
 	});
 
 	it('the build copies src/RELEASE.md over RELEASE.md, so the two are identical', () => {

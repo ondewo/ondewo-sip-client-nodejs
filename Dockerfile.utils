@@ -1,52 +1,48 @@
-FROM python:3.12-slim
+# The release toolchain: node/npm, gh, git and pre-commit, every one at a pinned version.
+#
+# It holds no repository file and no credential. The release hands credentials only to the docker runs
+# that use them (`--env-file`), mounts the npm/ folder read-only to publish it, and runs node/npm and
+# pre-commit here only when the host has none (see IN_TOOLS in the Makefile). So the image can be built
+# before `make build` has produced anything, which is what lets `release_preflight` run first.
+
+FROM python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
 
 ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Vienna
 
-ENV GITHUB_GH_TOKEN=<GITHUB_GH_TOKEN>
-ENV NPM_AUTOMATION_TOKEN=<NPM_AUTOMATION_TOKEN>
+ARG NVM_VERSION=v0.40.7
+ARG NODE_VERSION=24.21.0
+ARG GH_VERSION=2.101.0
+ARG GH_SHA256=9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8
+ARG PRE_COMMIT_VERSION=4.3.0
 
-RUN apt-get update -qq  \
-  && apt-get dist-upgrade -qq -y --no-install-recommends --fix-missing make tmux vim sed tree tk-dev curl sudo tzdata \
-  && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  \
-  && echo $TZ > /etc/timezone \
-  && dpkg-reconfigure --frontend noninteractive tzdata \
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN apt-get update -qq \
+  && apt-get install -qq -y --no-install-recommends ca-certificates curl git make \
   && apt-get clean \
-  && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ENV NVM_DIR=/opt/nvm
+RUN mkdir -p "$NVM_DIR" \
+  && curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | PROFILE=/dev/null bash \
+  && . "$NVM_DIR/nvm.sh" \
+  && nvm install "$NODE_VERSION" \
+  && nvm alias default "$NODE_VERSION" \
+  && nvm cache clear \
+  && chmod -R a+rX "$NVM_DIR"
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+RUN curl -fsSL -o /tmp/gh.tar.gz "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" \
+  && echo "${GH_SHA256}  /tmp/gh.tar.gz" | sha256sum -c - \
+  && tar -xzf /tmp/gh.tar.gz -C /tmp \
+  && install -m 0755 "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh \
+  && rm -rf /tmp/gh.tar.gz "/tmp/gh_${GH_VERSION}_linux_amd64"
 
-ENV NVM_DIR /home
-ENV NODE_VERSION=24.14.0
+RUN pip install --no-cache-dir "pre-commit==${PRE_COMMIT_VERSION}"
 
-RUN . ~/.nvm/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default
-
-ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-    && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-    && sudo apt update \
-    && sudo apt install -y gh
-
-WORKDIR /home/ondewo/
-
-COPY Makefile .
-
-COPY LICENSE .
-
-COPY README.md .
-
-COPY RELEASE.md .
-
-COPY npm npm
-
-# run the container forever
-CMD tail -f /dev/null
+# Runs as the invoking user (`--user $(id -u):$(id -g)`) when it works on the mounted repository; that
+# user has no home directory in the image.
+ENV HOME=/tmp/home
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+WORKDIR /work

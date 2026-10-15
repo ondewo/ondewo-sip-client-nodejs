@@ -1,0 +1,9 @@
+# The utils image needs no file of this repository (Dockerfile.utils copies nothing), so the build
+# context is empty. Named explicitly as well: the context must never carry these.
+ondewo-devops-accounts
+node_modules
+.git
+src/ondewo-sip-api
+ondewo-proto-compiler
+npm
+*
