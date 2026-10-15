@@ -41,6 +41,11 @@ VERIFY_ATTEMPTS?=20
 VERIFY_INTERVAL_S?=30
 # A token that is in the CALLER's environment is not passed on to any recipe either.
 unexport GITHUB_GH_TOKEN GH_TOKEN NPM_AUTOMATION_TOKEN
+# The PATH of the credentials file stays out of every recipe environment too: `$(MAKE) release
+# RELEASE_ENV_FILE=...` is a command-line variable, which make exports, so `npm test` and every container
+# inherited it - and a spec that ran make under that environment printed the real tokens into the release
+# log. Recipes read it as $(RELEASE_ENV_FILE); recursive makes still get it through MAKEFLAGS.
+unexport RELEASE_ENV_FILE
 
 # node/npm and pre-commit run on the host when it has them, else in the pinned utils image as the invoking
 # user. The image mounts the repository, which never holds the devops-accounts clone during a release.

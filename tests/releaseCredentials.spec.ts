@@ -111,6 +111,7 @@ runTestCase('credentials reach docker only through the RELEASE_ENV_FILE env-file
 
 runTestCase('a token in the caller environment is passed to no recipe', () => {
 	assert.match(MAKEFILE, /^unexport GITHUB_GH_TOKEN GH_TOKEN NPM_AUTOMATION_TOKEN$/m);
+	assert.match(MAKEFILE, /^unexport RELEASE_ENV_FILE$/m);
 	assert.equal(/^(?:GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN|GH_TOKEN)\s*[?:]?=/m.exec(MAKEFILE), null);
 });
 

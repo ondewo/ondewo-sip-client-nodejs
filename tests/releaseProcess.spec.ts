@@ -111,7 +111,8 @@ function git(dir: string, ...args: string[]): string {
 
 /**
  * Run make in a scratch repository, with no credential in its environment: not even the DEVOPS_ACCOUNT_DIR
- * the release driver hands the client, or the "no credential" cases pass a credential.
+ * the release driver hands the client or the RELEASE_ENV_FILE of ondewo_release. Inside a release both name
+ * the REAL credentials, which the stand-in docker below prints, and the "no credential" cases would pass.
  *
  * @param dir - The repository.
  * @param args - make arguments.
@@ -122,6 +123,7 @@ function runMake(dir: string, args: string[], env: NodeJS.ProcessEnv = {}): Spaw
 	const base: NodeJS.ProcessEnv = { ...process.env };
 	for (const name of [
 		'DEVOPS_ACCOUNT_DIR',
+		'RELEASE_ENV_FILE',
 		'GITHUB_GH_TOKEN',
 		'GH_TOKEN',
 		'NPM_AUTOMATION_TOKEN',
@@ -325,7 +327,7 @@ describe('ondewo_release', () => {
 				join(dir, 'fake-release.mk'),
 				[
 					'release:',
-					`\t@{ ls -l "$$RELEASE_ENV_FILE" | cut -c1-10; cat "$$RELEASE_ENV_FILE"; env | grep -c -E "^(GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN)=" || true; test -e ondewo-devops-accounts && echo clone-present || echo clone-gone; echo "$$RELEASE_ENV_FILE"; } > ${report}`,
+					`\t@{ ls -l "$(RELEASE_ENV_FILE)" | cut -c1-10; cat "$(RELEASE_ENV_FILE)"; env | grep -c -E "^(GITHUB_GH_TOKEN|NPM_AUTOMATION_TOKEN|RELEASE_ENV_FILE)=" || true; test -e ondewo-devops-accounts && echo clone-present || echo clone-gone; echo "$(RELEASE_ENV_FILE)"; } > ${report}`,
 					'\t@exit 1',
 					''
 				].join('\n')
