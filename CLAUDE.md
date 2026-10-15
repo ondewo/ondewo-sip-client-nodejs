@@ -98,17 +98,21 @@ These bit us during the 6.14.0 release. Keep them in mind when releasing.
 - **Trust the registry, not the log.** `make release_all_clients` wraps each client in `|| echo "Already released …"`, so a _failed_ release is reported as "done". After any release, verify the GitHub release **and** the published package (PyPI / npm) directly.
 - **`npm install failed after 5 attempts` in a release log is usually a red herring** — that text is the echo _inside_ the docker `RUN for i in 1..5; do npm install …` retry loop, not a real failure (`npm install` succeeds → `#10 DONE`). Look further down for the real error (a TTY error, an eslint failure, a `setup.py` error).
 - **Codegen must run TTY-free.** The `docker run` that invokes the proto-compiler must not pass `-it` — non-interactively it fails with `cannot attach stdin to a TTY-enabled container because stdin is not a terminal`. Fix the script (drop `-it`), or run the whole release under a pseudo-TTY: `script -qc 'make …' /dev/null`.
-- **Release Makefiles print secrets.** Some `docker run … -e <TOKEN>=…` recipe lines lack a leading `@`, so `make` echoes the expanded token. Rotate any token printed during a release; fix by prefixing the recipe line with `@`.
-- The release auto-pulls the **latest** `ondewo-proto-compiler` tag.
+- **Credentials reach only the docker runs that use them.** `ondewo_release` writes the two tokens to a `0600` `mktemp` file outside the repository (`RELEASE_ENV_FILE`), and only `release_preflight`, `publish_npm_via_docker`, `release_to_github_via_docker_image` and `release_verify` hand it to `docker run --env-file`. The Makefile `unexport`s `GITHUB_GH_TOKEN`, `GH_TOKEN` and `NPM_AUTOMATION_TOKEN`, so a token in the caller's environment reaches no recipe either. `tests/releaseCredentials.spec.ts` pins this.
+- The build checks the `ondewo-proto-compiler` submodule out at `ONDEWO_PROTO_COMPILER_GIT_BRANCH` (an exact tag, the one the committed submodule points at; the ondewo-sip-api release driver passes the version it pins).
 - **npm package names are inconsistent** — e.g. the JS client publishes as `@ondewo/ondewo-nlu-client-js` (double `ondewo`), not `@ondewo/nlu-client-js`. Check `src/package.json`'s `name` before querying npm.
 - **`generate` must not use `docker run -it`** — it fails in the non-interactive release (`cannot attach stdin to a TTY`). Use plain `docker run`; keep `-it` only on interactive `--entrypoint /bin/bash` debug commands.
 
 ## The release regenerates root package.json — CI test scripts are preserved via `.ci-package.json`
 
-The proto-compiler codegen (`cd src && npm run build`, whose output-volume is the **repo root**) regenerates the ROOT `package.json` on every release, overwriting the CI test scripts with codegen scripts and stripping test devDeps. This silently broke CI after every release. The durable fix, present in this repo:
+The proto-compiler codegen (`make npm_run_build`, a `docker run` whose output-volume is the **repo root**) regenerates the ROOT `package.json` on every release, overwriting the CI test scripts with codegen scripts and stripping test devDeps. This silently broke CI after every release. The durable fix, present in this repo:
 
 - **`.ci-package.json`** holds the CI test scripts + test-only devDeps (immune to the codegen).
 - **`make restore_ci_test_setup`** runs inside `build` _before_ `create_npm_package` and merges `.ci-package.json` back into the regenerated root `package.json`. It is an **inline `node -e`** on purpose — a helper `.js` file gets caught by the release's type-checked eslint (`no-require-imports`/`typedef`) and fails the release.
+- **`.ci-package.json` carries EVERY dev tool range** (eslint, prettier, husky, … not only the test tools), and
+  `make install_dependencies` runs a plain `npm install` that only brings `package-lock.json` in line with them. It used to
+  run `npm i --save-dev <each tool>`, which re-resolved every tool from `src/package.json`'s older ranges on each
+  release and silently moved eslint 10 back to 9. `tests/releaseProcess.spec.ts` pins both.
 - **`remove_npm_script`** strips scripts from the `npm/` _copy_ (never the repo root) and is guarded against a missing `npm/` dir + empty scripts block (previously crashed with Error 255 when `create_npm_package` had not run yet).
 - **Runtime deps the shipped auth helper needs (e.g. `undici`) must be declared in `src/package.json`** (the codegen source of truth) — otherwise the codegen strips them from root and the published package is missing them.
 - The `generate` script uses `docker run` **without `-it`** (a TTY-enabled container breaks the non-interactive release).
@@ -117,7 +121,7 @@ The proto-compiler codegen (`cd src && npm run build`, whose output-volume is th
 
 This repo now runs the pre-commit framework (markdownlint-cli2, pre-commit-hooks, giticket, conventional-commit) **alongside** husky's eslint/prettier. Hard-won rules:
 
-- **`.husky/pre-commit` must skip `pre-commit run` when `.pre-commit-config.yaml` is unstaged.** The release's `make run_precommit_hooks` invokes `.husky/pre-commit` **directly** (not via a git commit), and the codegen leaves the config unstaged → `pre-commit run` aborts with _"Your pre-commit configuration is unstaged"_ → the entire release fails. The guard (present in `.husky/pre-commit`): `if command -v pre-commit && git diff --quiet -- .pre-commit-config.yaml; then pre-commit run; fi` — still enforced on normal dev commits (config clean there).
+- **The release runs `make release_precommit_hooks`, not `.husky/pre-commit`.** The husky hook runs `pre-commit run` on the STAGED files only and skips it when pre-commit is missing or `.pre-commit-config.yaml` is unstaged, so before any `git add` it checked nothing. The release target runs eslint, prettier and `pre-commit run --all-files` (pre-commit from the pinned utils image when the host has none). The guard in `.husky/pre-commit` stays for dev commits.
 - **The release `git commit` uses `--no-verify`** so husky can't reformat the freshly-generated RELEASE.md / package.json mid-commit and break the release.
 - **markdownlint MD053 is disabled** in `.markdownlint-cli2.yaml`. Its auto-fix DELETES the `[comment]: <> (START/END OF GITHUB README)` reference-definition markers that the release Makefile slices the published README with (`perl … /START OF GITHUB README/../END OF GITHUB README/`). **Never re-enable MD053 here** — it silently breaks the README slice.
 - **RELEASE.md is the authoritative changelog and the release tag holds the complete history.** A markdownlint/`--all-files` pass (or a careless manual "dedup") can drop `## Release … X.Y.Z` headings; if that happens, restore `RELEASE.md` + `src/RELEASE.md` from the latest release tag.
@@ -158,11 +162,11 @@ git -C <submodule> checkout -q "$want" && git add <submodule>
 
 ### The release notes are sliced by an EXACTLY-CASED heading
 
-`CURRENT_RELEASE_NOTES` slices `RELEASE.md` with a perl range. In THIS repo the opening
-pattern is, verbatim:
+`CURRENT_RELEASE_NOTES` slices `RELEASE.md` with a perl range (`RELEASE_NOTES_RANGE`). In THIS repo the opening
+pattern is, verbatim (anchored, the version taken literally):
 
 ```text
-Release ONDEWO SIP Nodejs Client ${ONDEWO_SIP_VERSION}
+/^#+ Release ONDEWO SIP Nodejs Client \Q${ONDEWO_SIP_VERSION}\E$/
 ```
 
 So the heading of a new entry must read exactly `## Release ONDEWO SIP Nodejs Client <version>`. **This wording is
@@ -172,8 +176,7 @@ casing varies (`Js`, `Nodejs`, `Typescript`, `Survey`). Do not carry a heading o
 sibling repo. Copy the PREVIOUS entry in this file and change only the version, or read the
 pattern above out of the Makefile.
 
-A heading that does not match yields an **empty slice**, and the GitHub release is then
-created with empty notes or fails outright. Verify before releasing:
+A heading that does not match yields an **empty slice**, which `release_preflight` refuses. Verify before releasing:
 
 ```bash
 grep -c '^## Release ONDEWO SIP Nodejs Client ' RELEASE.md     # must be >= 1 for your new version
@@ -187,17 +190,17 @@ read it before building). This is silent: the release completes and the notes ar
 
 ### Publish order decides how a partial failure is recovered
 
-`make release` in this repo runs:
+`make release` runs `release_preflight` (read-only: both tokens valid, version not on origin or npm, notes present,
+host tools), `build`, `release_tests`, `release_precommit_hooks`, the local commit, `check_tag_matches_package`, then
+`publish_npm_via_docker` and `release_verify_npm`, and only then `git push`, `create_release_branch`,
+`create_release_tag`, `release_to_github_via_docker_image` and `release_verify`. `tests/releaseProcess.spec.ts` pins
+the order.
 
-1. `publish_npm_via_docker`
-2. `create_release_branch`
-3. `create_release_tag`
-4. `release_to_github_via_docker_image`
-
-The **npm publish happens FIRST**. So a failure in a later step (tag, GitHub release)
-leaves the package already published. Do **not** re-run `make ondewo_release` to recover: the
-`spc` guard refuses when the branch or tag already exists, and re-publishing the same version
-is rejected by the registry. Re-run only the step that failed, passing the credential it needs.
+So a failure before the publish leaves nothing outside this checkout (reset the local commit and fix it). A failure
+after the publish leaves the package on npm: do **not** re-run `make ondewo_release` to recover, because
+`release_preflight` refuses a version npm already has and the registry rejects a re-publish. Run the remaining steps
+by hand (`git push`, `make create_release_branch create_release_tag`, then the GitHub release and `release_verify` with
+a `RELEASE_ENV_FILE`).
 
 ### Verify against the registry, with the REAL package name
 
@@ -214,19 +217,17 @@ answer 404 for the new version while refusing a re-publish with
 `409 Cannot publish over previously staged version`. That is not a failure and the version is
 not burned — wait and re-check before bumping to a new number.
 
-### The release prints credentials — read the log BEFORE you scrub it
+### The release log carries no credential
 
-`make ondewo_release` clones `ondewo-devops-accounts` and passes the registry and GitHub tokens on
-the make command line, so they are echoed into the console and into any transcript capturing it.
-This is a known and accepted property of the shared release path: do **not** re-plumb the recipe.
-Redirect the run to a file, read it through a filter, and shred the file afterwards — and read it
-**before** shredding, or a genuine failure is lost with the secrets:
-
-```bash
-umask 077; make ondewo_release > /tmp/rel.log 2>&1; echo "RC=$?"
-grep -avE 'TOKEN|PASSWORD|USERNAME|_authToken' /tmp/rel.log | tail -20   # read FIRST
-shred -u /tmp/rel.log; rm -rf ondewo-devops-accounts                     # then scrub
-```
+`ondewo_release` reads the two tokens in a subshell, writes them to a `0600` file outside the repository and deletes
+the `ondewo-devops-accounts` clone before `make release` starts; a trap deletes the clone and the file on every exit,
+a failed release included. No recipe expands a token (make would put it on the argv of `/bin/sh -c`); npm reads it
+through a temporary userconfig holding the literal `${NPM_AUTOMATION_TOKEN}`, and gh gets it per call as `GH_TOKEN`.
+Set `DEVOPS_ACCOUNT_DIR` to an existing checkout to use it instead of cloning. Run on their own (as the
+ondewo-sip-api driver does) with only an absolute `DEVOPS_ACCOUNT_DIR`, `release_preflight` and `release_verify`
+write the tokens to a 0600 file for the one docker run that needs them and delete it again. `make -n ondewo_release` reads no
+credential (make runs a `$(MAKE)` line even under `-n`, so the recipe detects the dry run) and prints the release
+order.
 
 ### Run the release from `master`, and check with `git branch --show-current`
 
@@ -263,24 +264,19 @@ The general check costs nothing:
 git status --porcelain    # MUST be empty after a release; anything left is published-but-uncommitted
 ```
 
-### `git commit` exits 1 on a clean tree and takes the whole target down with it
+### `git commit` exits 1 on a clean tree
 
-If the release content was already committed by hand, `git commit` finds nothing to commit, returns
-1, and make abandons the target -- **before** the publish, the branch, the tag and the GitHub
-release -- while printing only `nothing to commit, working tree clean`. Read as a build failure it
-sends you hunting a compile error that is not there. The line is prefixed with `-` so the step is
-advisory; `spc` still refuses an existing branch or tag, so the guard cannot mask a double release.
+If the release content was already committed by hand, `git commit` finds nothing to commit and returns 1. The release
+therefore runs `git diff --cached --quiet || git commit --no-verify ...`: an empty commit is skipped, any other commit
+failure stops the release before the publish. (It used to be `-git commit`, which also swallowed real failures and
+then published a package whose content no commit held.)
 
 ### Write the RELEASE.md section BEFORE releasing, or the release body is silently empty
 
 `CURRENT_RELEASE_NOTES` slices RELEASE.md between the heading naming this exact version and the next
-`*****` separator. No heading means an EMPTY slice, `gh release create -n ""` succeeds, and you get a
-release with no notes and no error anywhere. ondewo-nlu-client-js and -typescript 7.1.1 shipped that
-way and had to be repaired after the fact.
-
-```bash
-cat RELEASE.md | perl -ne 'print if /<the exact heading> <version>/../^\*{5}/' | wc -l   # must be > 0
-```
+`*****` separator. ondewo-nlu-client-js and -typescript 7.1.1 shipped with empty notes because an empty slice was
+accepted. Here `release_preflight` refuses a missing or empty section in `src/RELEASE.md`, and
+`release_to_github_via_docker_image` refuses empty notes again before `gh release create`.
 
 ### Verify the three artefacts separately -- they fail independently
 
@@ -320,3 +316,6 @@ npm view <pkg> version ; git tag --list <version> ; gh release view <version> --
   `.js`, so `require('@ondewo/sip-client-nodejs')` failed with ERR_MODULE_NOT_FOUND. `tests/entryPoint.spec.ts`
   `require()`s the package root in a child process on every CI Node version; do not regenerate with an older compiler.
   The c8 gate includes only `.test-build/**`, so the committed `auth/*.js` loaded by that child are not measured.
+- The same spec DERIVES the expected RPCs from the pinned `src/ondewo-sip-api/ondewo/sip/*.proto` (`service` / `rpc`
+  lines), so a new RPC in the next API release cannot fail the release the way a hard-coded list would; it also checks
+  that `public-api.*` re-exports every generated stub. CI checks the api submodule out for it.

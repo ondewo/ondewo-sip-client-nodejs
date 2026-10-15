@@ -63,6 +63,13 @@ npm
 │           ├── sip_grpc_pb.js
 │           ├── sip_pb.d.ts
 │           └── sip_pb.js
+├── auth
+│   ├── grpcChannel.d.ts
+│   ├── grpcChannel.js
+│   ├── grpcChannel.ts
+│   ├── offlineTokenProvider.d.ts
+│   ├── offlineTokenProvider.js
+│   └── offlineTokenProvider.ts
 ├── LICENSE
 ├── package.json
 ├── public-api.d.ts
@@ -173,7 +180,7 @@ The `make build` command is dependent on 2 `repositories` and their speciefied `
 - [ondewo-sip-api](https://github.com/ondewo/ondewo-sip-api) -- `SIP_API_GIT_BRANCH` in `Makefile`
 - [ondewo-proto-compiler](https://github.com/ondewo/ondewo-proto-compiler) -- `ONDEWO_PROTO_COMPILER_GIT_BRANCH` in `Makefile`
 
-Other than creating the proto-code, `build` also installs the `dev-dependencies` and changes the owner of the proto-code-files from `root` to the `current user`.
+Other than creating the proto-code, `build` also installs the `dev-dependencies` and hands the files the codegen container created as `root` back to the `current user` (from inside a container, so no `sudo` is needed).
 
 In the case that some `google .protos` were not automatically generated, exists the option of creating a `proto-deps.txt` inside of the `src` folder. There, import statements can be written the same way as they are in `.proto` files.
 
@@ -219,16 +226,30 @@ TODO after PR merge:
   make ondewo_release
   ```
 
-<br>
-The release process can be divided into 6 Steps:
+`make ondewo_release` checks that neither the branch `release/X.X.X` nor the tag `X.X.X` exists (locally or on
+origin), copies the npm and GitHub tokens from `ondewo-devops-accounts` into a `0600` file outside the repository,
+deletes the `ondewo-devops-accounts` clone (also when the release fails) and runs `make release`. Set
+`DEVOPS_ACCOUNT_DIR` to an existing checkout to use it instead of cloning one.
 
-1. `build` specified version of the `ondewo-sip-api`
-2. `commit and push` all changes in code resulting from the `build`
-3. Publish the created `npm` folder to `npmjs.com`
-4. Create and push the `release branch` e.g. `release/1.3.20`
-5. Create and push the `release tag` e.g. `1.3.20`
-6. Create a new `Release` on GitHub
+`make release` then runs, and stops at the first failure:
 
-> :warning:  The Release Automation checks if the build has created all the proto-code files, but it does not check the code-integrity. Please build and test the generated code prior to starting the release process.
+1. `release_preflight` (read-only): the npm token authenticates (`npm whoami`), the GitHub token may push to this
+   repository, `git push --dry-run` works, the version is neither a tag nor a release branch on origin nor on npm,
+   `src/RELEASE.md` has a non-empty `## Release ONDEWO SIP Nodejs Client X.X.X` section, and the host tools exist
+2. `build` the specified version of the `ondewo-sip-api`
+3. `release_tests`: the whole CI test suite and the example tests, then every pre-commit hook
+4. commit locally, then `check_tag_matches_package`: every file of the npm tarball is committed and byte-equal at
+   `HEAD`
+5. publish the `npm` folder to `npmjs.com`, and wait until npm serves the version
+6. push, then create and push the `release branch` (e.g. `release/1.3.20`) and the `release tag` (e.g. `1.3.20`)
+7. create the `Release` on GitHub (it refuses empty notes), then `release_verify`: the tag is on origin, the GitHub
+   release has notes and npm serves the version
+
+Nothing is pushed before npm has accepted the package, so a failure up to step 5 leaves origin untouched.
+
+The host needs `docker`, `make`, `git`, `perl` and `curl`. `node`/`npm` and `pre-commit` are used from the host when
+it has them, and otherwise run in the pinned image built from `Dockerfile.utils`, which also runs `gh` and the npm
+publish. The tokens reach only the docker runs that use them (`--env-file`); none of them reaches `npm ci`, the tests
+or the hooks.
 
 [comment]: <> (END OF GITHUB README)
