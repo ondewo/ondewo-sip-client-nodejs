@@ -31,6 +31,7 @@ import * as grpc from '@grpc/grpc-js';
 import {
 	createChannelCredentials,
 	createGrpcClient,
+	CreateGrpcClientOptions,
 	DEFAULT_GRPC_CHANNEL_OPTIONS,
 	GrpcChannelLogger,
 	GrpcClientConfig,
@@ -134,6 +135,13 @@ function generatePki(dir: string): TestPki {
 }
 
 /**
+ * The servers listen on IP literals, and Node deprecates an IP address as the TLS ServerName (DEP0123,
+ * RFC 6066), so every TLS client of this spec names the certificate's DNS SAN instead. The certificate
+ * is still verified against the test CA; only the name it is checked for changes.
+ */
+const TLS_SERVER_NAME: grpc.ClientOptions = { 'grpc.ssl_target_name_override': 'localhost' };
+
+/**
  * Start an in-process gRPC server answering `Ping`.
  *
  * @param host - Address to bind (`127.0.0.1`, `[::1]`).
@@ -213,7 +221,7 @@ async function pingWith(
 ): Promise<CallOutcome> {
 	const client: grpc.Client = createGrpcClient(grpc.Client, fields, {
 		useSecureChannel,
-		channelOptions,
+		channelOptions: { ...TLS_SERVER_NAME, ...channelOptions },
 		logger: recordingLogger()
 	});
 	try {
@@ -699,7 +707,7 @@ describe('grpcChannel', () => {
 						grpcClientKey: pki.clientKey
 					},
 					true,
-					{ 'grpc.ssl_target_name_override': 'localhost' }
+					TLS_SERVER_NAME
 				);
 				assert.equal(outcome, null);
 			} finally {
@@ -731,8 +739,12 @@ describe('grpcChannel', () => {
 				grpcClientKey: pki.clientKey
 			});
 			const credentials: grpc.ChannelCredentials = createChannelCredentials(config);
-			const first: grpc.Client = createGrpcClient(grpc.Client, config, { credentials });
-			const second: grpc.Client = createGrpcClient(grpc.Client, config, { credentials });
+			const options: CreateGrpcClientOptions = {
+				credentials,
+				channelOptions: TLS_SERVER_NAME
+			};
+			const first: grpc.Client = createGrpcClient(grpc.Client, config, options);
+			const second: grpc.Client = createGrpcClient(grpc.Client, config, options);
 			try {
 				assert.equal(await ping(first), null);
 				assert.equal(await ping(second), null);
