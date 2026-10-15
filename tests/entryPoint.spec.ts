@@ -19,8 +19,8 @@
 
 import { strict as assert } from 'assert';
 import { execFileSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { existsSync, readdirSync, readFileSync } from 'fs';
+import { dirname, join, relative } from 'path';
 import { describe, it } from 'node:test';
 
 /**
@@ -48,21 +48,109 @@ const REPO_ROOT: string = findRepoRoot(__dirname);
  */
 function exportedNames(): string[] {
 	const script: string = `process.stdout.write(JSON.stringify(Object.keys(require(${JSON.stringify(REPO_ROOT)}))))`;
-	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8' })) as string[];
+	// The child loads the SHIPPED auth/*.js; keep it out of the parent's c8 coverage, which measures the test build.
+	const env: NodeJS.ProcessEnv = { ...process.env };
+	env.NODE_V8_COVERAGE = '';
+	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8', env })) as string[];
 }
 
 /**
- * `require()` the package root in a fresh Node process and list the RPCs of one generated client.
+ * `require()` the package root in a fresh Node process and evaluate one expression against it.
  *
- * @param client - Name of the generated client exported from the package root.
- * @returns The method names of the client's service definition.
+ * @param expression - JavaScript expression over `m`, the loaded package root; its value must be JSON.
+ * @returns The JSON-decoded value of the expression.
+ */
+function evaluateOnPackage(expression: string): unknown {
+	const script: string = `const m = require(${JSON.stringify(REPO_ROOT)}); process.stdout.write(JSON.stringify(${expression}))`;
+	const env: NodeJS.ProcessEnv = { ...process.env };
+	env.NODE_V8_COVERAGE = '';
+	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8', env })) as unknown;
+}
+
+/**
+ * List the RPCs of one generated client exported from the package root.
+ *
+ * @param client - Name of the generated client.
+ * @returns The method names of the client's service definition, sorted.
  */
 function serviceMethods(client: string): string[] {
-	const script: string = `process.stdout.write(JSON.stringify(Object.keys(require(${JSON.stringify(REPO_ROOT)})[${JSON.stringify(client)}].service)))`;
-	return JSON.parse(execFileSync(process.execPath, ['-e', script], { encoding: 'utf8' })) as string[];
+	return (evaluateOnPackage(`Object.keys(m[${JSON.stringify(client)}].service)`) as string[]).sort();
+}
+
+/**
+ * List the generated stubs below `api/` whose file name ends with `suffix`.
+ *
+ * @param suffix - File name ending, e.g. `_pb.js`.
+ * @param replacement - What `suffix` is replaced by in the returned path (the module specifier's ending).
+ * @returns Repository-relative paths (`./api/...`) with `suffix` replaced by `replacement`, sorted.
+ */
+function generatedStubs(suffix: string, replacement: string): string[] {
+	const found: string[] = [];
+	const walk: (dir: string) => void = (dir: string): void => {
+		for (const entry of readdirSync(dir, { withFileTypes: true })) {
+			const path: string = join(dir, entry.name);
+			if (entry.isDirectory()) {
+				walk(path);
+			} else if (entry.name.endsWith(suffix)) {
+				found.push(`./${relative(REPO_ROOT, path).slice(0, -suffix.length)}${replacement}`);
+			}
+		}
+	};
+	walk(join(REPO_ROOT, 'api'));
+	return found.sort();
+}
+
+/** The ondewo/sip protos of the pinned ondewo-sip-api submodule. */
+const SIP_PROTOS_DIR: string = join(REPO_ROOT, 'src', 'ondewo-sip-api', 'ondewo', 'sip');
+
+/**
+ * Read every `service` and its `rpc` names out of the pinned ondewo/sip protos, so the expectation moves
+ * with the API instead of being a list that the next API release breaks.
+ *
+ * @returns Service name to its RPCs as the generated client names them (lower camel case), sorted.
+ */
+function protoServices(): Map<string, string[]> {
+	assert.ok(
+		existsSync(SIP_PROTOS_DIR),
+		`${SIP_PROTOS_DIR} is missing: run git submodule update --init src/ondewo-sip-api`
+	);
+	const services: Map<string, string[]> = new Map<string, string[]>();
+	for (const file of readdirSync(SIP_PROTOS_DIR).filter((name: string): boolean => name.endsWith('.proto'))) {
+		const source: string = readFileSync(join(SIP_PROTOS_DIR, file), 'utf8').replace(/\/\/.*$/gm, '');
+		for (const block of source.matchAll(/^service\s+(\w+)\s*\{([\s\S]*?)^\}/gm)) {
+			const rpcs: string[] = [...block[2].matchAll(/\brpc\s+(\w+)\s*\(/g)].map(
+				(match: RegExpMatchArray): string => match[1].charAt(0).toLowerCase() + match[1].slice(1)
+			);
+			services.set(block[1], rpcs.sort());
+		}
+	}
+	return services;
 }
 
 describe('package entry point', () => {
+	// A release that commits a regenerated api/ without the regenerated public-api.* tags a version whose
+	// entry point lacks exports the npm tarball of that same version has.
+	it('public-api.js re-exports every generated stub and nothing that does not exist', () => {
+		const required: string[] = [
+			...readFileSync(join(REPO_ROOT, 'public-api.js'), 'utf8').matchAll(/require\('(\.\/api\/[^']+)'\)/g)
+		]
+			.map((match: RegExpMatchArray): string => match[1])
+			.sort();
+		assert.deepEqual(required, generatedStubs('_pb.js', '_pb'));
+	});
+
+	it('public-api.d.ts exports the typings of every generated stub', () => {
+		const exported: Set<string> = new Set<string>(
+			[...readFileSync(join(REPO_ROOT, 'public-api.d.ts'), 'utf8').matchAll(/from '(\.\/api\/[^']+)'/g)].map(
+				(match: RegExpMatchArray): string => match[1]
+			)
+		);
+		const missing: string[] = generatedStubs('_pb.d.ts', '_pb.d').filter(
+			(stub: string): boolean => !exported.has(stub)
+		);
+		assert.deepEqual(missing, []);
+	});
+
 	it('package.json main is the CommonJS public-api.js', () => {
 		const manifest: { main?: string } = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as {
 			main?: string;
@@ -95,22 +183,28 @@ describe('package entry point', () => {
 		}
 	});
 
-	it('the generated SipClient carries every Sip RPC of ondewo-sip-api 5.5.0', () => {
-		assert.deepEqual(serviceMethods('SipClient').sort(), [
+	it('every service of the pinned ondewo-sip-api protos has a client carrying exactly its RPCs', () => {
+		const services: Map<string, string[]> = protoServices();
+		assert.ok(services.size > 0, 'no service found in the ondewo/sip protos');
+		const clients: Record<string, string[]> = evaluateOnPackage(
+			`Object.fromEntries(${JSON.stringify([...services.keys()])}.map((s) => [s, m[s + 'Client'] ? Object.keys(m[s + 'Client'].service).sort() : null]))`
+		) as Record<string, string[]>;
+		for (const [service, rpcs] of services) {
+			assert.deepEqual(clients[service], rpcs, `${service}Client does not match service ${service} of the proto`);
+		}
+	});
+
+	it('SipClient carries the call-control and answering-machine RPCs of ondewo-sip-api 5.5.0', () => {
+		const methods: string[] = serviceMethods('SipClient');
+		for (const name of [
+			'sipStartCall',
 			'sipEndCall',
-			'sipEndSession',
 			'sipGetSipStatus',
-			'sipGetSipStatusHistory',
-			'sipMute',
-			'sipPlayWavFiles',
-			'sipRegisterAccount',
 			'sipReportAnsweringMachineDetected',
 			'sipSetCallMediaControl',
-			'sipStartCall',
-			'sipStartSession',
-			'sipStreamCallAudio',
-			'sipTransferCall',
-			'sipUnMute'
-		]);
+			'sipStreamCallAudio'
+		]) {
+			assert.ok(methods.includes(name), `SipClient has no ${name}`);
+		}
 	});
 });
