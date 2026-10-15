@@ -110,7 +110,8 @@ function git(dir: string, ...args: string[]): string {
 }
 
 /**
- * Run make in a scratch repository, with no credential in its environment.
+ * Run make in a scratch repository, with no credential in its environment: not even the DEVOPS_ACCOUNT_DIR
+ * the release driver hands the client, or the "no credential" cases pass a credential.
  *
  * @param dir - The repository.
  * @param args - make arguments.
@@ -119,7 +120,15 @@ function git(dir: string, ...args: string[]): string {
  */
 function runMake(dir: string, args: string[], env: NodeJS.ProcessEnv = {}): SpawnSyncReturns<string> {
 	const base: NodeJS.ProcessEnv = { ...process.env };
-	for (const name of ['GITHUB_GH_TOKEN', 'GH_TOKEN', 'NPM_AUTOMATION_TOKEN', 'MAKEFLAGS', 'MAKELEVEL', 'MFLAGS']) {
+	for (const name of [
+		'DEVOPS_ACCOUNT_DIR',
+		'GITHUB_GH_TOKEN',
+		'GH_TOKEN',
+		'NPM_AUTOMATION_TOKEN',
+		'MAKEFLAGS',
+		'MAKELEVEL',
+		'MFLAGS'
+	]) {
 		delete base[name];
 	}
 	return spawnSync('make', ['--no-print-directory', ...args], { cwd: dir, encoding: 'utf8', env: { ...base, ...env } });
