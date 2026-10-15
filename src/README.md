@@ -66,10 +66,8 @@ npm
 ├── auth
 │   ├── grpcChannel.d.ts
 │   ├── grpcChannel.js
-│   ├── grpcChannel.ts
 │   ├── offlineTokenProvider.d.ts
-│   ├── offlineTokenProvider.js
-│   └── offlineTokenProvider.ts
+│   └── offlineTokenProvider.js
 ├── LICENSE
 ├── package.json
 ├── public-api.d.ts

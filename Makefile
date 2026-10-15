@@ -386,7 +386,12 @@ create_npm_package: ## Create NPM Package for Release
 	mkdir npm
 	cp -R api npm
 	cp -R auth npm
+# The package ships auth/*.js and auth/*.d.ts. Its TypeScript SOURCES must stay out: a consumer's tsc resolves
+# `./auth/grpcChannel` to the .ts before the .d.ts and type-checks it under the consumer's own options
+# (skipLibCheck does not cover .ts files), which ondewo-vtsi-client-nodejs 9.1.0 failed under
+# exactOptionalPropertyTypes.
 	rm -f npm/auth/*.spec.* npm/auth/*.test.*
+	find npm/auth -name '*.ts' ! -name '*.d.ts' -delete
 	cp public-api.d.ts npm
 	cp public-api.js npm
 	cp package.json npm
@@ -394,7 +399,7 @@ create_npm_package: ## Create NPM Package for Release
 	cp LICENSE npm
 	cp README.md npm
 	# the published tarball is ./npm, so the ROOT .npmignore is never consulted: write one here too
-	printf '%s\n' '*.spec.*' '*.test.*' > npm/.npmignore
+	printf '%s\n' '*.spec.*' '*.test.*' '*.ts' '!*.d.ts' > npm/.npmignore
 
 # The codegen rewrites package.json; restore_ci_test_setup puts the dev tooling ranges of .ci-package.json
 # back. `npm install` then only brings package-lock.json in line with them. `npm i --save-dev <name>`

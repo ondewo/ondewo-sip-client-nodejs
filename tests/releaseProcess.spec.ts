@@ -423,6 +423,55 @@ describe('release_preflight and release_verify run on their own', () => {
 	});
 });
 
+describe('create_npm_package', () => {
+	it('ships the built auth helpers and the stubs, and no spec, test or TypeScript source', () => {
+		const dir: string = scratchRepository();
+		try {
+			for (const file of [
+				'api/ondewo/sip/sip_pb.js',
+				'api/ondewo/sip/sip_pb.d.ts',
+				'auth/grpcChannel.ts',
+				'auth/grpcChannel.js',
+				'auth/grpcChannel.d.ts',
+				'auth/grpcChannel.spec.ts',
+				'auth/grpcChannel.spec.js',
+				'auth/offlineTokenProvider.test.ts',
+				'public-api.js',
+				'public-api.d.ts',
+				'package-lock.json',
+				'LICENSE',
+				'README.md'
+			]) {
+				mkdirSync(join(dir, dirname(file)), { recursive: true });
+				writeFileSync(join(dir, file), '\n');
+			}
+			writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: '@ondewo/spec-package', version: '1.2.3' }));
+			assert.equal(runMake(dir, ['create_npm_package']).status, 0);
+			const packed: string = execFileSync('npm', ['pack', './npm', '--dry-run', '--json', '--ignore-scripts'], {
+				cwd: dir,
+				encoding: 'utf8',
+				stdio: ['ignore', 'pipe', 'ignore']
+			});
+			const shipped: string[] = (JSON.parse(packed) as { files: { path: string }[] }[])[0].files
+				.map((file: { path: string }): string => file.path)
+				.sort();
+			assert.deepEqual(shipped, [
+				'LICENSE',
+				'README.md',
+				'api/ondewo/sip/sip_pb.d.ts',
+				'api/ondewo/sip/sip_pb.js',
+				'auth/grpcChannel.d.ts',
+				'auth/grpcChannel.js',
+				'package.json',
+				'public-api.d.ts',
+				'public-api.js'
+			]);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+});
+
 describe('check_tag_matches_package', () => {
 	/**
 	 * Lay out a scratch repository with a committed root and an npm/ package built from it.
