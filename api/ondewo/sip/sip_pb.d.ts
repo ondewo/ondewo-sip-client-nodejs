@@ -229,6 +229,10 @@ export class SipTransferCallRequest extends jspb.Message {
     clearHeadersMap(): void;
     getOutcomeTimeoutMs(): number;
     setOutcomeTimeoutMs(value: number): SipTransferCallRequest;
+    getDelegation(): SipTransferDelegation;
+    setDelegation(value: SipTransferDelegation): SipTransferCallRequest;
+    getDelegatedRequestId(): string;
+    setDelegatedRequestId(value: string): SipTransferCallRequest;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SipTransferCallRequest.AsObject;
@@ -246,6 +250,45 @@ export namespace SipTransferCallRequest {
 
         headersMap: Array<[string, string]>,
         outcomeTimeoutMs: number,
+        delegation: SipTransferDelegation,
+        delegatedRequestId: string,
+    }
+}
+
+export class SipDelegatedTransfer extends jspb.Message { 
+    getRequestId(): string;
+    setRequestId(value: string): SipDelegatedTransfer;
+
+    hasRequestedAt(): boolean;
+    clearRequestedAt(): void;
+    getRequestedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+    setRequestedAt(value?: google_protobuf_timestamp_pb.Timestamp): SipDelegatedTransfer;
+    getTargetIsPhoneNumber(): boolean;
+    setTargetIsPhoneNumber(value: boolean): SipDelegatedTransfer;
+    getTransferId(): string;
+    setTransferId(value: string): SipDelegatedTransfer;
+
+    getHeadersMap(): jspb.Map<string, string>;
+    clearHeadersMap(): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SipDelegatedTransfer.AsObject;
+    static toObject(includeInstance: boolean, msg: SipDelegatedTransfer): SipDelegatedTransfer.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SipDelegatedTransfer, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SipDelegatedTransfer;
+    static deserializeBinaryFromReader(message: SipDelegatedTransfer, reader: jspb.BinaryReader): SipDelegatedTransfer;
+}
+
+export namespace SipDelegatedTransfer {
+    export type AsObject = {
+        requestId: string,
+        requestedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+        targetIsPhoneNumber: boolean,
+        transferId: string,
+
+        headersMap: Array<[string, string]>,
     }
 }
 
@@ -290,6 +333,17 @@ export class SipStatus extends jspb.Message {
     getSipResponseCode(): number;
     setSipResponseCode(value: number): SipStatus;
 
+    hasDelegatedTransfer(): boolean;
+    clearDelegatedTransfer(): void;
+    getDelegatedTransfer(): SipDelegatedTransfer | undefined;
+    setDelegatedTransfer(value?: SipDelegatedTransfer): SipStatus;
+    clearCapabilitiesList(): void;
+    getCapabilitiesList(): Array<string>;
+    setCapabilitiesList(value: Array<string>): SipStatus;
+    addCapabilities(value: string, index?: number): string;
+    getWarmTransferOutcomeNoticeStatus(): SipWarmTransferOutcomeNoticeStatus;
+    setWarmTransferOutcomeNoticeStatus(value: SipWarmTransferOutcomeNoticeStatus): SipStatus;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SipStatus.AsObject;
     static toObject(includeInstance: boolean, msg: SipStatus): SipStatus.AsObject;
@@ -319,6 +373,9 @@ export namespace SipStatus {
         listeningPaused: boolean,
         callAudioStreams: number,
         sipResponseCode: number,
+        delegatedTransfer?: SipDelegatedTransfer.AsObject,
+        capabilitiesList: Array<string>,
+        warmTransferOutcomeNoticeStatus: SipWarmTransferOutcomeNoticeStatus,
     }
 
     export enum StatusType {
@@ -381,6 +438,11 @@ export class SipSetCallMediaControlRequest extends jspb.Message {
     getParticipantsPresent(): boolean;
     setParticipantsPresent(value: boolean): SipSetCallMediaControlRequest;
 
+    hasWarmTransferOutcome(): boolean;
+    clearWarmTransferOutcome(): void;
+    getWarmTransferOutcome(): SipWarmTransferOutcomeNotice | undefined;
+    setWarmTransferOutcome(value?: SipWarmTransferOutcomeNotice): SipSetCallMediaControlRequest;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SipSetCallMediaControlRequest.AsObject;
     static toObject(includeInstance: boolean, msg: SipSetCallMediaControlRequest): SipSetCallMediaControlRequest.AsObject;
@@ -397,6 +459,62 @@ export namespace SipSetCallMediaControlRequest {
         botListening: MediaControlSetting,
         owner: MediaControlOwner,
         participantsPresent: boolean,
+        warmTransferOutcome?: SipWarmTransferOutcomeNotice.AsObject,
+    }
+}
+
+export class SipWarmTransferOutcomeNotice extends jspb.Message { 
+    getRequestId(): string;
+    setRequestId(value: string): SipWarmTransferOutcomeNotice;
+    getOutcome(): SipWarmTransferOutcome;
+    setOutcome(value: SipWarmTransferOutcome): SipWarmTransferOutcomeNotice;
+    getIntroSession(): string;
+    setIntroSession(value: string): SipWarmTransferOutcomeNotice;
+    getCalleeDisplayName(): string;
+    setCalleeDisplayName(value: string): SipWarmTransferOutcomeNotice;
+    getCause(): string;
+    setCause(value: string): SipWarmTransferOutcomeNotice;
+    getFallbackText(): string;
+    setFallbackText(value: string): SipWarmTransferOutcomeNotice;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SipWarmTransferOutcomeNotice.AsObject;
+    static toObject(includeInstance: boolean, msg: SipWarmTransferOutcomeNotice): SipWarmTransferOutcomeNotice.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SipWarmTransferOutcomeNotice, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SipWarmTransferOutcomeNotice;
+    static deserializeBinaryFromReader(message: SipWarmTransferOutcomeNotice, reader: jspb.BinaryReader): SipWarmTransferOutcomeNotice;
+}
+
+export namespace SipWarmTransferOutcomeNotice {
+    export type AsObject = {
+        requestId: string,
+        outcome: SipWarmTransferOutcome,
+        introSession: string,
+        calleeDisplayName: string,
+        cause: string,
+        fallbackText: string,
+    }
+}
+
+export class SipSendDtmfRequest extends jspb.Message { 
+    getDigits(): string;
+    setDigits(value: string): SipSendDtmfRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SipSendDtmfRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: SipSendDtmfRequest): SipSendDtmfRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SipSendDtmfRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SipSendDtmfRequest;
+    static deserializeBinaryFromReader(message: SipSendDtmfRequest, reader: jspb.BinaryReader): SipSendDtmfRequest;
+}
+
+export namespace SipSendDtmfRequest {
+    export type AsObject = {
+        digits: string,
     }
 }
 
@@ -665,6 +783,13 @@ export namespace SipPlayWavFilesRequest {
     }
 }
 
+export enum SipTransferDelegation {
+    SIP_TRANSFER_DELEGATION_UNSPECIFIED = 0,
+    SIP_TRANSFER_DELEGATION_CLAIM = 1,
+    SIP_TRANSFER_DELEGATION_EXECUTE = 2,
+    SIP_TRANSFER_DELEGATION_DISCARD = 3,
+}
+
 export enum MediaControlSetting {
     MEDIA_CONTROL_SETTING_UNCHANGED = 0,
     MEDIA_CONTROL_SETTING_ON = 1,
@@ -675,6 +800,22 @@ export enum MediaControlOwner {
     MEDIA_CONTROL_OWNER_UNSPECIFIED = 0,
     MEDIA_CONTROL_OWNER_OPERATOR = 1,
     MEDIA_CONTROL_OWNER_PARTICIPANT = 2,
+}
+
+export enum SipWarmTransferOutcome {
+    SIP_WARM_TRANSFER_OUTCOME_UNSPECIFIED = 0,
+    SIP_WARM_TRANSFER_OUTCOME_DECLINED = 1,
+    SIP_WARM_TRANSFER_OUTCOME_UNREACHABLE = 2,
+    SIP_WARM_TRANSFER_OUTCOME_DELEGATION_EXPIRED = 3,
+}
+
+export enum SipWarmTransferOutcomeNoticeStatus {
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_UNSPECIFIED = 0,
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_QUEUED = 1,
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_DUPLICATE = 2,
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_DISABLED = 3,
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_INVALID = 4,
+    SIP_WARM_TRANSFER_OUTCOME_NOTICE_STATUS_PENDING = 5,
 }
 
 export enum SipCallAudioMode {

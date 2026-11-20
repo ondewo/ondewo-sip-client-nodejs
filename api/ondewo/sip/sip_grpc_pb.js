@@ -98,6 +98,17 @@ function deserialize_ondewo_sip_SipReportAnsweringMachineDetectedRequest(buffer_
   return ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_ondewo_sip_SipSendDtmfRequest(arg) {
+  if (!(arg instanceof ondewo_sip_sip_pb.SipSendDtmfRequest)) {
+    throw new Error('Expected argument of type ondewo.sip.SipSendDtmfRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ondewo_sip_SipSendDtmfRequest(buffer_arg) {
+  return ondewo_sip_sip_pb.SipSendDtmfRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_ondewo_sip_SipSetCallMediaControlRequest(arg) {
   if (!(arg instanceof ondewo_sip_sip_pb.SipSetCallMediaControlRequest)) {
     throw new Error('Expected argument of type ondewo.sip.SipSetCallMediaControlRequest');
@@ -232,6 +243,15 @@ sipEndCall: {
 // party in it, the invited participant included. The refusal is RETURNED as <code>TRANSFER_CALL_FAILED</code> with
 // <code>exception_name=ParticipantsPresent</code> and <code>description = reason=participants-present</code>; nothing
 // is sent and the call is kept.</p>
+// <p>Transfer delegation (see <code>SipTransferDelegation</code>): in a container started with
+// <code>SIP_TRANSFER_DELEGATION_ACTIVE=True</code> a transfer that the in-container speech-to-speech pipeline asks for
+// on a connected call is not sent. It is parked in <code>SipStatus.delegated_transfer</code> and RETURNED as
+// <code>TRANSFER_CALL_FAILED</code> with <code>exception_name=TransferDelegated</code> and
+// <code>description = reason=delegated-to-vtsi</code>; the call is kept. A client (ONDEWO VTSI) then claims it with
+// <code>delegation</code> and <code>delegated_request_id</code>. A second transfer of the pipeline while one is
+// parked is refused with <code>exception_name=TransferInProgress</code>. Without that environment variable, and
+// for every request with <code>delegation = SIP_TRANSFER_DELEGATION_UNSPECIFIED</code> from any other peer, the
+// transfer is sent as before.</p>
 sipTransferCall: {
     path: '/ondewo.sip.Sip/SipTransferCall',
     requestStream: false,
@@ -354,6 +374,10 @@ sipReportAnsweringMachineDetected: {
 // <code>NoOngoingCall</code>, <code>AmdInProgress</code>, <code>CsiMediaControlFailed</code>) and never assigned to
 // the shared status. When the pipeline refuses or fails, a requested pause is rolled back and a requested mute is
 // kept (the safe direction); the returned fields carry the actual level.</p>
+// <p>A request may carry a <code>warm_transfer_outcome</code> notice (participant owner only, refused otherwise with
+// <code>exception_name=InvalidWarmTransferOutcomeNotice</code>). The notice is handed to the speech-to-speech
+// pipeline whether or not the level changed, and the answer of the pipeline is returned in
+// <code>SipStatus.warm_transfer_outcome_notice_status</code>.</p>
 sipSetCallMediaControl: {
     path: '/ondewo.sip.Sip/SipSetCallMediaControl',
     requestStream: false,
@@ -390,6 +414,27 @@ sipStreamCallAudio: {
     responseDeserialize: deserialize_ondewo_sip_SipCallAudioResponse,
   },
   // Not idempotent (no idempotency_level): a stream takes a slot and, in TALK, takes over the call.
+// <p>Send DTMF keys into the ongoing connected call, as RFC 4733 telephone-events (e.g. to navigate an IVR the bot
+// called, or for an operator).</p>
+// <p>Metadata as for <code>SipSetCallMediaControl</code>: <code>x-ondewo-expected-call-id</code> must equal
+// <code>SipStatus.call_id</code> of the ongoing call; a peer outside the container presents
+// <code>x-ondewo-sip-call-control-token</code> when the container has one.</p>
+// <p>Returns the live status. Refusals are RETURNED in <code>exception_name</code> / <code>description</code>
+// (<code>CallScopeMismatch</code>, <code>CallControlUnauthenticated</code>, <code>NoOngoingCall</code>,
+// <code>AmdInProgress</code>, <code>InvalidDtmf</code>) and never assigned to the shared status. The keys are never
+// logged in clear.</p>
+sipSendDtmf: {
+    path: '/ondewo.sip.Sip/SipSendDtmf',
+    requestStream: false,
+    responseStream: false,
+    requestType: ondewo_sip_sip_pb.SipSendDtmfRequest,
+    responseType: ondewo_sip_sip_pb.SipStatus,
+    requestSerialize: serialize_ondewo_sip_SipSendDtmfRequest,
+    requestDeserialize: deserialize_ondewo_sip_SipSendDtmfRequest,
+    responseSerialize: serialize_ondewo_sip_SipStatus,
+    responseDeserialize: deserialize_ondewo_sip_SipStatus,
+  },
+  // Not idempotent (no idempotency_level): a retried attempt sends the keys again.
 };
 
 exports.SipClient = grpc.makeGenericClientConstructor(SipService, 'Sip');

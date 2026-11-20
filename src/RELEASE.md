@@ -2,6 +2,15 @@
 
 *****************
 
+## Release ONDEWO SIP Nodejs Client 5.7.0
+
+### Improvements
+
+* Tracking API Version [5.7.0](https://github.com/ondewo/ondewo-sip-api/releases/tag/5.7.0) ( [Documentation](https://ondewo.github.io/ondewo-sip-api/) )
+* [[OND236-120]](https://ondewo.atlassian.net/browse/OND236-120) Generated with ondewo-proto-compiler 5.17.0 (protoc 35.1). New runtime floors: `@grpc/grpc-js` ^1.14.7 and `google-protobuf` 3.21.4; the stubs come from protoc 35.1 with `protoc-gen-js` 3.21.4 and grpc-tools 1.13.1.
+
+*****************
+
 ## Release ONDEWO SIP Nodejs Client 5.5.2
 
 ### Improvements

@@ -24,6 +24,7 @@ interface ISipService extends grpc.ServiceDefinition<grpc.UntypedServiceImplemen
     sipReportAnsweringMachineDetected: ISipService_ISipReportAnsweringMachineDetected;
     sipSetCallMediaControl: ISipService_ISipSetCallMediaControl;
     sipStreamCallAudio: ISipService_ISipStreamCallAudio;
+    sipSendDtmf: ISipService_ISipSendDtmf;
 }
 
 interface ISipService_ISipStartSession extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipStartSessionRequest, ondewo_sip_sip_pb.SipStatus> {
@@ -152,6 +153,15 @@ interface ISipService_ISipStreamCallAudio extends grpc.MethodDefinition<ondewo_s
     responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipCallAudioResponse>;
     responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipCallAudioResponse>;
 }
+interface ISipService_ISipSendDtmf extends grpc.MethodDefinition<ondewo_sip_sip_pb.SipSendDtmfRequest, ondewo_sip_sip_pb.SipStatus> {
+    path: "/ondewo.sip.Sip/SipSendDtmf";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<ondewo_sip_sip_pb.SipSendDtmfRequest>;
+    requestDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipSendDtmfRequest>;
+    responseSerialize: grpc.serialize<ondewo_sip_sip_pb.SipStatus>;
+    responseDeserialize: grpc.deserialize<ondewo_sip_sip_pb.SipStatus>;
+}
 
 export const SipService: ISipService;
 
@@ -170,6 +180,7 @@ export interface ISipServer {
     sipReportAnsweringMachineDetected: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipReportAnsweringMachineDetectedRequest, ondewo_sip_sip_pb.SipStatus>;
     sipSetCallMediaControl: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipSetCallMediaControlRequest, ondewo_sip_sip_pb.SipStatus>;
     sipStreamCallAudio: grpc.handleBidiStreamingCall<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    sipSendDtmf: grpc.handleUnaryCall<ondewo_sip_sip_pb.SipSendDtmfRequest, ondewo_sip_sip_pb.SipStatus>;
 }
 
 export interface ISipClient {
@@ -215,6 +226,9 @@ export interface ISipClient {
     sipStreamCallAudio(): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
     sipStreamCallAudio(options: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
     sipStreamCallAudio(metadata: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
 }
 
 export class SipClient extends grpc.Client implements ISipClient {
@@ -260,4 +274,7 @@ export class SipClient extends grpc.Client implements ISipClient {
     public sipSetCallMediaControl(request: ondewo_sip_sip_pb.SipSetCallMediaControlRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
     public sipStreamCallAudio(options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
     public sipStreamCallAudio(metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientDuplexStream<ondewo_sip_sip_pb.SipCallAudioRequest, ondewo_sip_sip_pb.SipCallAudioResponse>;
+    public sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
+    public sipSendDtmf(request: ondewo_sip_sip_pb.SipSendDtmfRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: ondewo_sip_sip_pb.SipStatus) => void): grpc.ClientUnaryCall;
 }
