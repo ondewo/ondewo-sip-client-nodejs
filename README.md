@@ -75,6 +75,35 @@ npm
 └── README.md
 ```
 
+## Authentication
+
+All RPCs are authenticated with a Keycloak-issued **bearer token**. The package ships a token provider that acquires it, refreshes it before it expires and attaches it to every call as the `authorization: Bearer <token>` gRPC metadata.
+
+```ts
+import { SipClient, createGrpcClient, getKeycloakTokenProvider, GrpcClientConfig } from '@ondewo/sip-client-nodejs';
+
+// One provider per credential set, shared by every client built from it (one login).
+const tokenProvider = await getKeycloakTokenProvider({
+  keycloakUrl: 'https://auth.example.com/auth',
+  realm: 'ondewo-ccai-platform',
+  clientId: 'ondewo-sip-cai-sdk-public',
+  username: 'tech-user@example.com',
+  password: '...', // password login: one ROPC grant with scope=offline_access
+  // refreshToken: '...', // OR a handed-off OFFLINE token: one refresh grant, no password is ever sent
+  tokenExpirationInS: undefined // optional bound on how long the token is refreshed
+});
+
+const client: SipClient = createGrpcClient(SipClient, new GrpcClientConfig({ host: 'sip.example.com', port: 443 }), {
+  tokenProvider // null (no Keycloak fields set) attaches nothing
+});
+```
+
+- **Password or offline token.** With `refreshToken` set the provider starts with one `grant_type=refresh_token` exchange and never sends a password grant, not even when the token is refused (the refusal is raised). Keycloak's brute-force protection counts failed *logins*, so many processes sharing one technical user should start from an offline token.
+- **Refresh.** A background timer (unref-ed, so it never keeps the process alive) refreshes 30 s before expiry; `getAuthorizationMetadata()`, which every call reads, refreshes on demand as well. Concurrent calls share one refresh.
+- **Failures never end the refresh.** A failed refresh is retried with jittered exponential backoff (5 s, doubling, capped at 300 s), logs one warning per failure (`logger`, default `console`) and one info line on recovery. While the token is still valid it keeps being served; only an expired token that cannot be refreshed fails the call, with a `KeycloakAuthenticationError` (a `TokenError` subclass whose `cause` is the underlying error). No message or rendering contains a password or token.
+- **Validation.** `keycloakUrl`, `realm` and `clientId` go together (setting only some throws), and one of `password` / `refreshToken` is required. `keycloakVerifySsl: false` disables TLS verification for the token request only.
+- `login(options)` builds a new, unshared provider; call `provider.stop()` (or `close()`) when you are done with one. The legacy `cai-token` / HTTP-basic credentials no longer exist. See the [`examples/`](https://github.com/ondewo/ondewo-sip-client-nodejs/tree/master/examples) directory for a full `Sip.SipGetSipStatus` RPC example.
+
 ## TLS, mutual TLS and certificates
 
 gRPC encrypts with **TLS** ("SSL" in names such as `credentials.createSsl` or `grpc.ssl_target_name_override` is legacy naming). The package ships a channel helper, `auth/grpcChannel` (exported from the package root), that builds the `@grpc/grpc-js` credentials and channel options for every generated client:
