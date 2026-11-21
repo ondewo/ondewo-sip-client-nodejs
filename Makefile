@@ -16,7 +16,7 @@ export
 # 		Variables
 ########################################################
 
-ONDEWO_SIP_VERSION=5.7.0
+ONDEWO_SIP_VERSION=5.7.2
 SIP_API_GIT_BRANCH=tags/5.7.0
 # Must name the tag the committed ondewo-proto-compiler submodule points at, otherwise
 # check_out_correct_submodule_versions checks the submodule BACK to the older tag.
