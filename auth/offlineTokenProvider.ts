@@ -491,12 +491,6 @@ export class OfflineTokenProvider {
 				'login'
 			);
 			this.storeTokens(payload);
-			if (this.refreshToken === null) {
-				throw new KeycloakAuthenticationError(
-					'Keycloak token response did not contain a refresh_token; the SDK client must have ' +
-						'directAccessGrants + the offline_access scope (ondewo-sip-cai-sdk-public)'
-				);
-			}
 		}
 		if (this.tokenExpirationInS !== undefined) {
 			this.deadlineS = this.nowS() + this.tokenExpirationInS;
@@ -784,7 +778,7 @@ export class OfflineTokenProvider {
 			{
 				grant_type: 'refresh_token',
 				client_id: this.clientId,
-				refresh_token: this.refreshToken as string
+				refresh_token: this.refreshToken ?? ''
 			},
 			'refresh'
 		);
@@ -861,7 +855,10 @@ export class OfflineTokenProvider {
 		if (typeof accessToken !== 'string' || accessToken.length === 0) {
 			throw new KeycloakAuthenticationError(
 				'Keycloak token response did not contain an access_token; the response carried the fields ' +
-					`[${Object.keys(payload).sort().join(', ')}] (values withheld: a token response is credential material)`
+					`[${Object.keys(payload)
+						.sort()
+						.map((name: string): string => `'${name}'`)
+						.join(', ')}] (values withheld: a token response is credential material)`
 			);
 		}
 		const expiresInS: number = parseExpiresIn(payload.expires_in);
@@ -991,7 +988,7 @@ export function keycloakProviderRegistryKey(options: Partial<OfflineTokenLoginOp
 		options.username ?? '',
 		options.password ?? '',
 		options.tokenExpirationInS === undefined ? '' : String(options.tokenExpirationInS),
-		String(options.keycloakVerifySsl ?? true),
+		(options.keycloakVerifySsl ?? true) ? 'True' : 'False',
 		options.refreshToken ?? ''
 	];
 	return createHash('sha256').update(fields.join('\0'), 'utf8').digest('hex');

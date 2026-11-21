@@ -325,16 +325,18 @@ runTestCase('login rejects a non-2xx token response with TokenError', async () =
 });
 
 /**
- * Asserts a 2xx token response without a `refresh_token` (the SDK client lacks `offline_access`)
- * rejects {@link login} with a {@link TokenError} that names the MISSING `refresh_token` -- not the
- * `access_token`, which this response does carry.
+ * Asserts a 2xx token response without a `refresh_token` (the SDK client lacks `offline_access`) is
+ * still accepted, exactly like the python SDK: the access token is served and the (absent) refresh
+ * token is kept as it was.
  */
-runTestCase('login rejects when the token response carries no refresh_token (missing offline_access)', async () => {
+runTestCase('login accepts a token response that carries no refresh_token (missing offline_access)', async () => {
 	const stub: FetchStub = makeFetchStub([{ body: { access_token: 'access-1', expires_in: 300 } }]);
-	await assert.rejects(() => login({ ...BASE_OPTIONS, fetchImpl: stub.fetchImpl }), {
-		name: 'KeycloakAuthenticationError',
-		message: /did not contain a refresh_token/
-	});
+	const provider: OfflineTokenProvider = await login({ ...BASE_OPTIONS, fetchImpl: stub.fetchImpl });
+	try {
+		assert.equal(provider.getAccessToken(), 'access-1');
+	} finally {
+		provider.stop();
+	}
 });
 
 /**

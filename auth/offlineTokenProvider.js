@@ -261,10 +261,6 @@ class OfflineTokenProvider {
                 scope: 'offline_access'
             }, 'login');
             this.storeTokens(payload);
-            if (this.refreshToken === null) {
-                throw new KeycloakAuthenticationError('Keycloak token response did not contain a refresh_token; the SDK client must have ' +
-                    'directAccessGrants + the offline_access scope (ondewo-sip-cai-sdk-public)');
-            }
         }
         if (this.tokenExpirationInS !== undefined) {
             this.deadlineS = this.nowS() + this.tokenExpirationInS;
@@ -527,7 +523,7 @@ class OfflineTokenProvider {
         const payload = await this.postTokenRequest({
             grant_type: 'refresh_token',
             client_id: this.clientId,
-            refresh_token: this.refreshToken
+            refresh_token: this.refreshToken ?? ''
         }, 'refresh');
         this.storeTokens(payload);
     }
@@ -591,7 +587,10 @@ class OfflineTokenProvider {
         const accessToken = payload.access_token;
         if (typeof accessToken !== 'string' || accessToken.length === 0) {
             throw new KeycloakAuthenticationError('Keycloak token response did not contain an access_token; the response carried the fields ' +
-                `[${Object.keys(payload).sort().join(', ')}] (values withheld: a token response is credential material)`);
+                `[${Object.keys(payload)
+                    .sort()
+                    .map((name) => `'${name}'`)
+                    .join(', ')}] (values withheld: a token response is credential material)`);
         }
         const expiresInS = parseExpiresIn(payload.expires_in);
         this.accessToken = accessToken;
@@ -710,7 +709,7 @@ function keycloakProviderRegistryKey(options) {
         options.username ?? '',
         options.password ?? '',
         options.tokenExpirationInS === undefined ? '' : String(options.tokenExpirationInS),
-        String(options.keycloakVerifySsl ?? true),
+        (options.keycloakVerifySsl ?? true) ? 'True' : 'False',
         options.refreshToken ?? ''
     ];
     return (0, crypto_1.createHash)('sha256').update(fields.join('\0'), 'utf8').digest('hex');
